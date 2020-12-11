@@ -28,6 +28,7 @@ object AOC {
       case "8" => DayEight
       case "9" => DayNine
       case "10" => DayTen
+      case "11" => DayEleven
       case _ => throw new RuntimeException("Didn't understand that day")
     }
     part match {
@@ -49,6 +50,7 @@ object AOC {
       case "8" => printAnswers(DayEight, input)
       case "9" => printAnswers(DayNine, input)
       case "10" => printAnswers(DayTen, input)
+      case "11" => printAnswers(DayEleven, input)
       case _ => throw new RuntimeException("Didn't understand that day")
     }
   }

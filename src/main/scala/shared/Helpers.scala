@@ -32,5 +32,4 @@ trait Helpers {
       case '-' => 0 - str.tail.mkString.toInt
     }
   }
-
 }
