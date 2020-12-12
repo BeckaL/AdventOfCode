@@ -9,13 +9,13 @@ object AOC {
     val input = bufferedSource.getLines().toList
     bufferedSource.close()
     if (args.size > 1) {
-      runPart(args.head, args(1))
+      runPart(args.head, args(1), input)
     } else {
       printAnswers(args.head, input)
     }
   }
 
-  private def runPart(day: String, part: String) = {
+  private def runPart(day: String, part: String, input: List[String]) = {
     println(s"running part $part of day $day")
     val d = day match {
       case "1" => DayOne
@@ -34,8 +34,23 @@ object AOC {
       case _ => throw new RuntimeException("Didn't understand that day")
     }
     part match {
-      case "1" => println(d.partOne(d.testData))
-      case "2" => println(d.partTwo(d.testData))
+      case "1" =>
+        val ans = d.partOne(d.testData)
+        if (d.expectedPartOne contains ans) {
+          println(ans)
+          println(d.expectedPartOne)
+          println(s"GO part one!!! ${d.partOne(input)}")
+        } else {
+          println(ans)
+        }
+      case "2" =>
+        val ans = d.partTwo(d.testData)
+        if (d.expectedPartTwo contains ans) {
+          println(ans)
+          println(s"GO part two!!! ${d.partTwo(input)}")
+        } else {
+          println(ans)
+        }
     }
   }
 
