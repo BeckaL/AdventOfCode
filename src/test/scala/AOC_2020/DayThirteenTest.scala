@@ -3,18 +3,19 @@ package AOC_2020
 import org.scalatest.FlatSpec
 import shared.{DayChallenge, DayChallengeBehaviours}
 
-class DayTenTest extends FlatSpec with DayChallengeBehaviours[Int, Long] {
-  override val day = "Day ten"
-  override val file: String = "Day10Input"
-  override val dayChallenge: DayChallenge[Int,Long] = DayTen
+class DayThirteenTest extends FlatSpec with DayChallengeBehaviours[Int, Int] {
+  override val day = "Day thirteen"
+  override val file: String = "Day13Input"
+  override val dayChallenge: DayChallenge[Int,Int] = DayThirteen
 
   private val testInput = dayChallenge.testData
 
   day should behave like partOneWorkingCorrectly(testInput, dayChallenge.expectedPartOne.get)
 
-  it should behave like partOneWorksOnRealData(2812)
+  it should behave like partOneWorksOnRealData(1)
 
   it should behave like partTwoWorksOnTestData(testInput, dayChallenge.expectedPartTwo.getOrElse(0))
 
-  it should behave like partTwoWorksOnRealData("386869246296064".toLong)
+  it should behave like partTwoWorksOnRealData(1)
+
 }
