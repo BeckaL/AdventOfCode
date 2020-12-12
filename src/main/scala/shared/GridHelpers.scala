@@ -8,6 +8,8 @@ trait GridHelpers {
 
     def rowAt(y: Int) = grid(y).toList
     def colAt(x: Int) = grid.map(_(x))
+
+
   }
 
   def getImmediateNeighbours(x: Int, y: Int, l: List[String]): List[Char] =
@@ -16,5 +18,23 @@ trait GridHelpers {
   val diagonalVectors = List((-1, -1), (1, -1), (1, 1), (-1, 1))
   val adjacentVectors = diagonalVectors ++ List((-1, 0), (0, -1), (0, 1), (1, 0))
 
-  case class Coord(x: Int, y: Int)
+  case class Coord(x: Int, y: Int) {
+    def rotateAroundOrigin(direction: Char): Coord =
+      direction match {
+        case 'W' => Coord(-y, x)
+        case 'E' => Coord(y, -x)
+        case 'S' => Coord(-x, -y)
+        case 'N' => this
+      }
+
+    def move(direction: Char, n: Int): Coord =
+      direction match {
+        case 'N' => Coord(x, y + n)
+        case 'E' => Coord(x + n, y)
+        case 'W' => Coord(x - n.toInt, y)
+        case 'S' => Coord(x, y - n.toInt)
+      }
+
+    def taxicabDistanceFromOrigin: Int = x.abs + y.abs
+  }
 }
