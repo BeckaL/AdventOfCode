@@ -1,6 +1,6 @@
 package AOC_2020
 
-import shared.{DayChallenge, GridHelpers}
+import shared.{Coord, DayChallenge, GridHelpers}
 
 object DayTwelve extends DayChallenge[Int, Int] with GridHelpers {
   override def partOne(l: List[String]): Int =

@@ -1,6 +1,6 @@
 package AOC_2018
 
-import shared.DayChallenge
+import shared.{Coord, DayChallenge}
 
 object DayThree extends DayChallenge[Int, Int] {
   override def partOne(l: List[String]): Int = {
@@ -42,8 +42,6 @@ object DayThree extends DayChallenge[Int, Int] {
       }
     }
   }
-
-    case class Coord(x: Int, y: Int)
 
     object Rectangle {
       def from(str: String): Rectangle = str.split("@")(1).trim.split(":").map(_.trim).toList match {
