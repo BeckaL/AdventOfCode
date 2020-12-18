@@ -32,4 +32,10 @@ trait Helpers {
       case '-' => 0 - str.tail.mkString.toInt
     }
   }
+
+  def indicesOf(string: String, char: Char): List[Int] =
+    string.zipWithIndex.foldLeft(List[Int]()) { case (indices, (stringChar, i)) => if (stringChar == char) indices :+ i else indices }
+
+  def indicesOf(l: List[String], str: String): List[Int] =
+    l.zipWithIndex.foldLeft(List[Int]()) { case (indices, (stringChar, i)) => if (stringChar == str) indices :+ i else indices }
 }

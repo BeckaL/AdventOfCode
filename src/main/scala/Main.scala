@@ -31,6 +31,11 @@ object AOC {
       case "11" => DayEleven
       case "12" => DayTwelve
       case "13" => DayThirteen
+      case "14" => DayFourteen
+      case "15" => DayFifteen
+      case "16" => DaySixteen
+      case "17" => DaySeventeen
+      case "18" => DayEighteen
       case _ => throw new RuntimeException("Didn't understand that day")
     }
     part match {
@@ -44,7 +49,7 @@ object AOC {
           println(ans)
         }
       case "2" =>
-        val ans = d.partTwo(d.testData)
+        val ans = d.partTwo(d.testData2.getOrElse(d.testData))
         if (d.expectedPartTwo contains ans) {
           println(ans)
           println(s"GO part two!!! ${d.partTwo(input)}")
@@ -70,6 +75,11 @@ object AOC {
       case "11" => printAnswers(DayEleven, input)
       case "12" => printAnswers(DayTwelve, input)
       case "13" => printAnswers(DayThirteen, input)
+      case "14" => printAnswers(DayFourteen, input)
+      case "15" => printAnswers(DayFifteen, input)
+      case "16" => printAnswers(DaySixteen, input)
+      case "17" => printAnswers(DaySeventeen, input)
+      case "18" => printAnswers(DayEighteen, input)
       case _ => throw new RuntimeException("Didn't understand that day")
     }
   }
@@ -77,7 +87,7 @@ object AOC {
   private def printAnswers[A, B](day: DayChallenge[A, B], input: List[String]): Unit = {
     val testAns1 = day.partOne(day.testData)
     val realAns1 = day.partOne(input)
-    val testAns2 = day.partTwo(day.testData)
+    val testAns2 = day.partTwo(day.testData2.getOrElse(day.testData))
     val realAns2 = day.partTwo(input)
 
     if (day.expectedPartTwo.contains(testAns2)) {
