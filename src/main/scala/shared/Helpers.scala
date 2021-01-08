@@ -38,4 +38,6 @@ trait Helpers {
 
   def indicesOf(l: List[String], str: String): List[Int] =
     l.zipWithIndex.foldLeft(List[Int]()) { case (indices, (stringChar, i)) => if (stringChar == str) indices :+ i else indices }
+
+  def cycle(currentI: Int, len: Int): Int = (currentI + 1) % len
 }

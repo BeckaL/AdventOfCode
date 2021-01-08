@@ -8,6 +8,7 @@ object Controller2015 extends YearController {
     val d = day match {
       case "1" => DayOne
       case "2" => DayTwo
+      case "3" => DayThree
       case _ => throw new RuntimeException("Didn't understand that day")
     }
     part match {
@@ -38,6 +39,7 @@ object Controller2015 extends YearController {
     day match {
       case "1" => printAnswers(DayOne, input)
       case "2" => printAnswers(DayTwo, input)
+      case "3" => printAnswers(DayThree, input)
       case _ => throw new RuntimeException("Didn't understand that day")
     }
   }

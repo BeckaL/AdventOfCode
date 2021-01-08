@@ -27,6 +27,10 @@ object Controller2020 extends YearController {
       case "19" => DayNineteen
       case "20" => DayTwenty
       case "21" => DayTwentyOne
+      case "22" => DayTwentyTwo
+      case "23" => DayTwentyThree
+      case "24" => DayTwentyFour
+      case "25" => DayTwentyFive
       case _ => throw new RuntimeException("Didn't understand that day")
     }
     part match {
@@ -76,6 +80,10 @@ object Controller2020 extends YearController {
       case "19" => printAnswers(DayNineteen, input)
       case "20" => printAnswers(DayTwenty, input)
       case "21" => printAnswers(DayTwentyOne, input)
+      case "22" => printAnswers(DayTwentyTwo, input)
+      case "23" => printAnswers(DayTwentyThree, input)
+      case "24" => printAnswers(DayTwentyFour, input)
+      case "25" => printAnswers(DayTwentyFive, input)
       case _ => throw new RuntimeException("Didn't understand that day")
     }
   }

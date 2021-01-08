@@ -3,81 +3,14 @@ package AOC_2020
 import shared.{DayChallenge, Helpers}
 
 object DayNineteen extends DayChallenge[Long, Long] with Helpers {
-  override val expectedPartOne: Option[Long] = Some(1)
-  override val expectedPartTwo: Option[Long] = Some(0)
-  override val testData: List[String] = List(
-    "0: 4 1 5",
-    "1: 2 3 | 3 2",
-    "2: 4 4 | 5 5",
-    "3: 4 5 | 5 4",
-    "4: \"a\"",
-    "5: \"b\"",
-    "",
-    "ababbb",
-    "bababa",
-    "abbbab",
-    "aaabbb",
-    "aaaabbb",
-  )
+
 
   override def partOne(l: List[String]): Long = {
     val (rStrings, stringsWithEmptyHead) = l.splitAt(l.indexOf(""))
     val rules = getRules(rStrings)
-//    rules.foreach { r =>
-//      println(s"r index is ${r.i}")
-//      println(s"r replacement string is ${r.replacementStr}")
-//    }
-    val reduced = reduceRules(rules, List())
-    println(reduced.replacementStr)
-    val segments = getSegments(reduced.asStr, List())
-    println(segments.mkString("\n"))
-    println(s"segments size is ${segments.size}")
-    println(s"here 1")
-    println(segments.map(injectAnds(_)).mkString("\n"))
-    println(s"here 2")
-
-    1
-  }
-
-  private def injectAnds(segment: String, i: Int = 0, currentSegment: String = ""): String = {
-    if (i == segment.indices.end - 1) {
-      currentSegment + segment(i)
-    } else {
-      val newStr = if (segment(i) == ')' && segment(i + 1) == '(') ")&" else segment(i)
-      injectAnds(segment, i + 1, currentSegment + newStr)
-    }
-  }
-
-  private def getSegments(str: String, segments: List[String]): List[String] = {
-    if (str.contains('(')) {
-      val firstOpening = str.indexOf('(')
-      val segmentEnd = if (firstOpening != 0) {
-        firstOpening - 1
-      } else {
-       findClosingBracket(str, 0, 0)
-      }
-      if (segmentEnd == str.indices.end) {
-        segments :+ str
-      } else {
-        val (segment, remaining) = str.splitAt(segmentEnd + 1)
-        getSegments(remaining, segments :+ segment)
-      }
-    } else {
-      segments :+ str
-    }
-  }
-
-  private def findClosingBracket(str: String, unclosedOpenings: Int, i: Int): Int = {
-    val char = str(i)
-    char match {
-      case '(' => findClosingBracket(str, unclosedOpenings + 1, i + 1)
-      case ')' =>
-        unclosedOpenings - 1 match {
-          case newUnclosed if newUnclosed == 0 => i
-          case newUnclosed => findClosingBracket(str, newUnclosed, i + 1)
-        }
-      case _ => findClosingBracket(str, unclosedOpenings, i + 1)
-    }
+    println(rules.take(10))
+    val reduced = reduceRules(getRules(rStrings), List())
+    stringsWithEmptyHead.tail.count(candidateStr => candidateStr.matches(reduced.asStr))
   }
 
   private def reduceRules(rules: List[Rule], resolved: List[Int]): Rule = {
@@ -89,6 +22,19 @@ object DayNineteen extends DayChallenge[Long, Long] with Helpers {
       val newRules = replacementMap.foldLeft(rules) { case (newRules, (index, replacement)) => newRules.map(_.replace(index, replacement)) }
       val newRulesWithoutResolve = newRules.filterNot(newResolved contains _)
       reduceRules(newRulesWithoutResolve, resolved ++ newResolved.map(_.i))
+    }
+  }
+
+  private def getRuleI(rules: List[Rule], resolved: List[Int], i: Int): Rule = {
+    val newResolved = rules.filter(_.isResolved).filterNot(resolved contains _)
+    val replacementMap = newResolved.map { r => r.i -> r.replacementStr }
+    val newRules = replacementMap.foldLeft(rules) { case (newRules, (index, replacement)) => newRules.map(_.replace(index, replacement)) }
+    val ruleI = rules.find(_.i == i).get
+    if (ruleI.isResolved) {
+      ruleI
+    } else {
+      val newRulesWithoutResolve = newRules.filterNot(newResolved contains _).toList
+      getRuleI(newRulesWithoutResolve, resolved ++ newResolved.map(_.i), i)
     }
   }
 
@@ -111,5 +57,73 @@ object DayNineteen extends DayChallenge[Long, Long] with Helpers {
   }
 
 
-  override def partTwo(l: List[String]): Long = ???
+
+
+  override def partTwo(l: List[String]): Long = {
+  }
+
+  override val expectedPartOne: Option[Long] = Some(2)
+  override val expectedPartTwo: Option[Long] = Some(12)
+  override val testData2: Option[List[String]] = Some(List(
+    "42: 9 14 | 10 1",
+    "9: 14 27 | 1 26",
+    "10: 23 14 | 28 1",
+    "1: \"a\"",
+    "11: 42 31",
+    "5: 1 14 | 15 1",
+    "19: 14 1 | 14 14",
+    "12: 24 14 | 19 1",
+    "16: 15 1 | 14 14",
+    "31: 14 17 | 1 13",
+    "6: 14 14 | 1 14",
+    "2: 1 24 | 14 4",
+    "0: 8 11",
+    "13: 14 3 | 1 12",
+    "15: 1 | 14",
+    "17: 14 2 | 1 7",
+    "23: 25 1 | 22 14",
+    "28: 16 1",
+    "4: 1 1",
+    "20: 14 14 | 1 15",
+    "3: 5 14 | 16 1",
+    "27: 1 6 | 14 18",
+    "14: \"b\"",
+    "21: 14 1 | 1 14",
+    "25: 1 1 | 1 14",
+    "22: 14 14",
+    "8: 42",
+    "26: 14 22 | 1 20",
+    "18: 15 15",
+    "7: 14 5 | 1 21",
+    "24: 14 1",
+    "",
+    "abbbbbabbbaaaababbaabbbbabababbbabbbbbbabaaaa",
+    "bbabbbbaabaabba",
+    "babbbbaabbbbbabbbbbbaabaaabaaa",
+    "aaabbbbbbaaaabaababaabababbabaaabbababababaaa",
+    "bbbbbbbaaaabbbbaaabbabaaa",
+    "bbbababbbbaaaaaaaabbababaaababaabab",
+    "ababaaaaaabaaab",
+    "ababaaaaabbbaba",
+    "baabbaaaabbaaaababbaababb",
+    "abbbbabbbbaaaababbbbbbaaaababb",
+    "aaaaabbaabaaaaababaa",
+    "aaaabbaaaabbaaa",
+    "aaaabbaabbaaaaaaabbbabbbaaabbaabaaa",
+    "babaaabbbaaabaababbaabababaaab",
+    "aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba"))
+  override val testData: List[String] = List(
+    "0: 4 1 5",
+    "1: 2 3 | 3 2",
+    "2: 4 4 | 5 5",
+    "3: 4 5 | 5 4",
+    "4: \"a\"",
+    "5: \"b\"",
+    "",
+    "ababbb",
+    "bababa",
+    "abbbab",
+    "aaabbb",
+    "aaaabbb",
+  )
 }
