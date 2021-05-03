@@ -1,14 +1,12 @@
-package AOC_2015
+package AOC_2017
 
-import shared.{DayChallenge, YearController}
+import shared.YearController
 
-object Controller2015 extends YearController {
-  def runPart(day: String, part: String, input: List[String]) = {
-    println(s"running part $part of day $day 2015")
+object Controller2017 extends YearController {
+  override def runPart(day: String, part: String, input: List[String]) = {
+    println(s"running part $part of day $day 2017")
     val d = day match {
       case "1" => DayOne
-      case "2" => DayTwo
-      case "3" => DayThree
       case _ => throw new RuntimeException("Didn't understand that day")
     }
     part match {
@@ -34,13 +32,8 @@ object Controller2015 extends YearController {
     }
   }
 
-
-  def printAnswers(day: String, input: List[String]): Unit = {
-    day match {
-      case "1" => printAnswers(DayOne, input)
-      case "2" => printAnswers(DayTwo, input)
-      case "3" => printAnswers(DayThree, input)
-      case _ => throw new RuntimeException("Didn't understand that day")
-    }
+  override def printAnswers(day: String, input: List[String]): Unit = day match {
+    case "1" => printAnswers(DayOne, input)
+    case _ => throw new RuntimeException("Didn't understand that day")
   }
 }

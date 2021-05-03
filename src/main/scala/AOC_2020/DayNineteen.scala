@@ -60,6 +60,7 @@ object DayNineteen extends DayChallenge[Long, Long] with Helpers {
 
 
   override def partTwo(l: List[String]): Long = {
+    ???
   }
 
   override val expectedPartOne: Option[Long] = Some(2)
