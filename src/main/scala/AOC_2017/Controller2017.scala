@@ -7,6 +7,7 @@ object Controller2017 extends YearController {
     println(s"running part $part of day $day 2017")
     val d = day match {
       case "1" => DayOne
+      case "2" => DayTwo
       case _ => throw new RuntimeException("Didn't understand that day")
     }
     part match {
@@ -34,6 +35,7 @@ object Controller2017 extends YearController {
 
   override def printAnswers(day: String, input: List[String]): Unit = day match {
     case "1" => printAnswers(DayOne, input)
+    case "2" => printAnswers(DayTwo, input)
     case _ => throw new RuntimeException("Didn't understand that day")
   }
 }
