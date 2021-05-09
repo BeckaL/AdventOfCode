@@ -35,7 +35,7 @@ object DayEleven extends DayChallenge[Int, Int] {
       case "ne" => (x + 2, y + 1)
     }
 
-  //TODO: Brute force atm, work out mathematical way
+  //TODO: Brute force atm, work out nicer way
   override def partTwo(l: List[String]): Int = {
     l.head.split(",").toList.foldLeft(((0, 0), 0)) { case (((x, y), numberOfSteps), direction) =>
       val newCoord = move(direction, x, y)

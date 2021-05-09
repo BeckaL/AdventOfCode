@@ -17,6 +17,7 @@ object Controller2017 extends YearController {
       case "9" => DayNine
       case "10" => DayTen
       case "11" => DayEleven
+      case "12" => DayTwelve
       case "13" => DayThirteen
       case "16" => DaySixteen
       case _ => throw new RuntimeException("Didn't understand that day")
@@ -56,6 +57,7 @@ object Controller2017 extends YearController {
     case "9" => printAnswers(DayNine, input)
     case "10" => printAnswers(DayTen, input)
     case "11" => printAnswers(DayEleven, input)
+    case "12" => printAnswers(DayTwelve, input)
     case "13" => printAnswers(DayThirteen, input)
     case "16" => printAnswers(DaySixteen, input)
     case _ => throw new RuntimeException("Didn't understand that day")
