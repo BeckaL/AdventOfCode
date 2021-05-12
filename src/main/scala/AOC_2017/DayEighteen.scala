@@ -5,7 +5,7 @@ import shared.DayChallenge
 import scala.annotation.tailrec
 import scala.util.{Failure, Success, Try}
 
-object DayEighteen extends DayChallenge[Long, Int]{
+object DayEighteen extends DayChallenge[Long, Int] {
   override def partOne(l: List[String]): Long =
     interpret(l, State(None, Map.empty[String, Long]), 0)
 
@@ -15,11 +15,17 @@ object DayEighteen extends DayChallenge[Long, Int]{
       case Success(i) => i
       case _ => m.getOrElse(x, 0)
     }
+
     def multiply(x: String, by: String) = State(lastSound, m.updated(x, get(x) * get(by)))
-    def increase(x: String, by: String): State  = State(lastSound, m.updated(x, get(x) + get(by)))
-    def modulo(x: String, by: String): State =  State(lastSound, m.updated(x, get(x) % get(by)))
-    def set(x: String, to: String): State  = State(lastSound, m.updated(x, get(to)))
+
+    def increase(x: String, by: String): State = State(lastSound, m.updated(x, get(x) + get(by)))
+
+    def modulo(x: String, by: String): State = State(lastSound, m.updated(x, get(x) % get(by)))
+
+    def set(x: String, to: String): State = State(lastSound, m.updated(x, get(to)))
+
     def sound(x: String): State = State(Some(get(x)), m)
+
     def offset(x: String, y: String): Long = if (get(x) > 0) get(y) else 1
   }
 
@@ -40,36 +46,38 @@ object DayEighteen extends DayChallenge[Long, Int]{
         if (s.m(x) == 0) interpret(instructions, s, currentI + 1) else s.lastSound.get
       case "jgz" :: x :: y :: Nil =>
         interpret(instructions, s, currentI + s.offset(x, y).toInt)
-      case str @ _ => throw new RuntimeException(s"Didn't understand instruction $str")
+      case str@_ => throw new RuntimeException(s"Didn't understand instruction $str")
     }
   }
 
   override def partTwo(l: List[String]): Int = {
-    val p0 = Program("program0", 0, List.empty, 0, Map("p" -> 0), Running)
-    val p1 = Program("program1", 0, List.empty, 0, Map("p" -> 1), Running)
-    ParallelState(p0, p1, true).interpret(l)
+    val p0 = ParallelProgram(0, 0, List.empty, 0, Map("p" -> 0), terminated = false)
+    val p1 = ParallelProgram(1, 0, List.empty, 0, Map("p" -> 1), terminated = false)
+    parallelInterpret(l, p0, p1).find(_.id == 1).get.noSent
   }
 
-  trait ProgramState
-    case object Running extends ProgramState
-    case object Locked extends ProgramState
-  case object Terminated extends ProgramState
-
-  case class Program(id: String, position: Int, queue: List[Long], noSent: Int, values: Map[String, Long], state: ProgramState) {
+  case class ParallelProgram(id: Int, position: Int, queue: List[Long], noSent: Int, values: Map[String, Long], terminated: Boolean) {
     def multiply(x: String, by: String) = this.copy(values = values.updated(x, get(x) * get(by))).setStateToRunning.incrementPositionBy1
-    def increase(x: String, by: String): Program  = this.copy(values = values.updated(x, get(x) + get(by))).setStateToRunning.incrementPositionBy1
-    def modulo(x: String, by: String): Program =  this.copy(values = values.updated(x, get(x) % get(by))).setStateToRunning.incrementPositionBy1
-    def set(x: String, to: String): Program  = this.copy(values = values.updated(x, get(to))).setStateToRunning.incrementPositionBy1
-    def send(x: String): (Long, Program) = (get(x), this.copy(noSent = noSent + 1).setStateToRunning.incrementPositionBy1)
-    def offset(x: String, y: String): Program = this.copy(position = position + (if (get(x) > 0) get(y) else 1).toInt).setStateToRunning
+
+    def increase(x: String, by: String): ParallelProgram = this.copy(values = values.updated(x, get(x) + get(by))).setStateToRunning.incrementPositionBy1
+
+    def modulo(x: String, by: String): ParallelProgram = this.copy(values = values.updated(x, get(x) % get(by))).setStateToRunning.incrementPositionBy1
+
+    def set(x: String, to: String): ParallelProgram = this.copy(values = values.updated(x, get(to))).setStateToRunning.incrementPositionBy1
+
+    def send(x: String): (Long, ParallelProgram) = (get(x), this.copy(noSent = noSent + 1).setStateToRunning.incrementPositionBy1)
+
+    def offset(x: String, y: String): ParallelProgram = this.copy(position = position + (if (get(x) > 0) get(y) else 1).toInt).setStateToRunning
+
     def receive(storeAt: String) = queue match {
-      case Nil => this.copy(state = Locked)
+      case Nil => this.copy(terminated = true)
       case valueToStore :: others => this.copy(queue = others, values = values.updated(storeAt, valueToStore)).setStateToRunning.incrementPositionBy1
     }
-    def addToQueue(x: Long) = this.copy(queue = queue :+ x)
-    def terminated: Boolean = state != Running
 
-    private def setStateToRunning = this.copy(state = Running)
+    def addToQueue(x: Long) = this.copy(queue = queue :+ x)
+
+    private def setStateToRunning = this.copy(terminated = false)
+
     private def incrementPositionBy1 = this.copy(position = position + 1)
 
     private def get(x: String): Long = Try(x.toInt) match {
@@ -78,43 +86,37 @@ object DayEighteen extends DayChallenge[Long, Int]{
     }
   }
 
-  case class ParallelState(p0: Program, p1: Program, p0Active: Boolean) {
-    val terminated = p0.terminated && p1.terminated
-    @tailrec
-    final def interpret(instructions: List[String]): Int = {
-      if (terminated) {
-        p1.noSent
-      } else {
-        val (active, inactive) = if (p0Active) (p0, p1) else (p1, p0)
-        val newState = Try(instructions(active.position)) match {
-          case Failure(_) =>
-            val newActive = active.copy(state = Terminated)
-            if (p0Active) ParallelState(newActive, inactive, false) else ParallelState(inactive, newActive, true)
-          case Success(instruction) =>
-            val (newActive, newInactive) = instruction.split(" ").toList match {
-              case "snd" :: x :: Nil =>
-                val (sent, newActive) = active.send(x)
-                (newActive, inactive.addToQueue(sent))
-              case "set" :: x :: to :: Nil =>
-                (active.set(x, to), inactive)
-              case "add" :: x :: by :: Nil =>
-                (active.increase(x, by), inactive)
-              case "mul" :: x :: by :: Nil =>
-                (active.multiply(x, by), inactive)
-              case "mod" :: x :: by :: Nil =>
-                (active.modulo(x, by), inactive)
-              case "rcv" :: x :: Nil =>
-                (active.receive(x), inactive)
-              case "jgz" :: x :: by :: Nil =>
-                (active.offset(x, by), inactive)
-              case str@_ => throw new RuntimeException(s"Didn't understand instruction $str")
-            }
-            if(p0Active) ParallelState(newActive, newInactive, false) else ParallelState(newInactive, newActive, true)
-        }
-        newState.interpret(instructions)
+  @tailrec
+  final def parallelInterpret(instructions: List[String], active: ParallelProgram, inactive: ParallelProgram): List[ParallelProgram] = {
+    if (active.terminated && inactive.terminated) {
+      List(active, inactive)
+    } else {
+      Try(instructions(active.position)) match {
+        case Failure(_) =>
+          parallelInterpret(instructions, inactive, active.copy(terminated = true))
+        case Success(instruction) =>
+          instruction.split(" ").toList match {
+            case "snd" :: x :: Nil =>
+              val (sent, newActive) = active.send(x)
+              parallelInterpret(instructions, inactive.addToQueue(sent), newActive)
+            case "set" :: x :: to :: Nil =>
+              parallelInterpret(instructions, inactive, active.set(x, to))
+            case "add" :: x :: by :: Nil =>
+              parallelInterpret(instructions, inactive, active.increase(x, by))
+            case "mul" :: x :: by :: Nil =>
+              parallelInterpret(instructions, inactive, active.multiply(x, by))
+            case "mod" :: x :: by :: Nil =>
+              parallelInterpret(instructions, inactive, active.modulo(x, by))
+            case "rcv" :: x :: Nil =>
+              parallelInterpret(instructions, inactive, active.receive(x))
+            case "jgz" :: x :: by :: Nil =>
+              parallelInterpret(instructions, inactive, active.offset(x, by))
+            case str@_ => throw new RuntimeException(s"Didn't understand instruction $str")
+          }
       }
     }
   }
+
 
 
   override val expectedPartOne: Option[Long] = Some(4)
