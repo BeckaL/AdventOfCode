@@ -1,6 +1,6 @@
 package AOC_2017
 
-import shared.DayChallenge
+import shared.{DayChallenge, TestData}
 
 object DayOne extends DayChallenge[Int, Int] {
 
@@ -21,7 +21,9 @@ object DayOne extends DayChallenge[Int, Int] {
   }
 
   private def getNumbers(l: List[String]): List[Int] = l.head.split("").toList.map(_.toInt)
+}
 
+object DayOneData extends TestData[Int, Int] {
   override val testData: List[String] = List("9112122129")
   override val expectedPartOne: Option[Int] = Some(12)
   override val testData2: Option[List[String]] = Some(List("12131415"))

@@ -1,10 +1,8 @@
 package AOC_2017
 
-import shared.{DayChallenge, Helpers}
+import shared.{DayChallenge, Helpers, TestData}
 
 object DaySeven extends DayChallenge[String, Int] with Helpers {
-  override val expectedPartOne: Option[String] = Some("tknk")
-  override val testData: List[String] = "pbga (66)\nxhth (57)\nebii (61)\nhavc (66)\nktlj (57)\nfwft (72) -> ktlj, cntj, xhth\nqoyq (66)\npadx (45) -> pbga, havc, qoyq\ntknk (41) -> ugml, padx, fwft\njptl (61)\nugml (68) -> gyxo, ebii, jptl\ngyxo (61)\ncntj (57)".split("\n").toList
   override def partOne(l: List[String]): String =
     getBottomElement(getTower(l))
 
@@ -23,4 +21,10 @@ object DaySeven extends DayChallenge[String, Int] with Helpers {
   }
 
   override def partTwo(l: List[String]): Int = ???
+}
+object DaySevenData extends TestData[String, Int] {
+  override val expectedPartOne: Option[String] = Some("tknk")
+  override val testData: List[String] = "pbga (66)\nxhth (57)\nebii (61)\nhavc (66)\nktlj (57)\nfwft (72) -> ktlj, cntj, xhth\nqoyq (66)\npadx (45) -> pbga, havc, qoyq\ntknk (41) -> ugml, padx, fwft\njptl (61)\nugml (68) -> gyxo, ebii, jptl\ngyxo (61)\ncntj (57)".split("\n").toList
+  override val expectedPartTwo: Option[Int] = ???
+  override val testData2: Option[List[String]] = ???
 }

@@ -1,6 +1,6 @@
 package AOC_2017
 
-import shared.DayChallenge
+import shared.{DayChallenge, TestData}
 
 object DaySix extends DayChallenge[Int, Int] {
 
@@ -35,7 +35,9 @@ object DaySix extends DayChallenge[Int, Int] {
     val result = redistributeMemoryBlocks(l.head.split("\t").map(_.toInt).toList)
     result.size - 1 - result.indexOf(result.last)
   }
+}
 
+object DaySixData extends TestData[Int, Int] {
   override val expectedPartOne: Option[Int] = Some(5)
   override val expectedPartTwo: Option[Int] = Some(4)
   override val testData: List[String] = List("0\t2\t7\t0")

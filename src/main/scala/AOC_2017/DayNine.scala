@@ -1,6 +1,6 @@
 package AOC_2017
 
-import shared.DayChallenge
+import shared.{DayChallenge, TestData}
 
 object DayNine extends DayChallenge[Int, Int] {
 
@@ -41,7 +41,9 @@ object DayNine extends DayChallenge[Int, Int] {
             s.take(index) ++ s.takeRight(s.size - 2 - until).removeGarbage
         }
   }
+}
 
+object DayNineData extends TestData[Int, Int] {
   override val testData: List[String] = List(
     "{}",
     "{{{}}}",
@@ -64,5 +66,4 @@ object DayNine extends DayChallenge[Int, Int] {
     "<{o'i!a,<{i<a>"
   ))
   override val expectedPartTwo: Option[Int] = Some(32)
-
 }

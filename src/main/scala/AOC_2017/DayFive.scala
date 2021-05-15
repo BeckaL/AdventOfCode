@@ -1,6 +1,6 @@
 package AOC_2017
 
-import shared.DayChallenge
+import shared.{DayChallenge, TestData}
 
 import scala.annotation.tailrec
 
@@ -22,7 +22,9 @@ object DayFive extends DayChallenge[Int, Int]{
 
   private def makeMap(l: List[String]): Map[Int, Int] =
     l.map(_.toInt).zipWithIndex.map{case (k, index) => index -> k}.toMap
+}
 
+object DayFiveData extends TestData[Int, Int] {
   override val testData: List[String] = "0\n3\n0\n1\n-3".split("\n").toList
   override val expectedPartOne: Option[Int] = Some(5)
   override val expectedPartTwo: Option[Int] = Some(10)

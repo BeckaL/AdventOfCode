@@ -1,6 +1,6 @@
 package AOC_2017
 
-import shared.{DayChallenge, Helpers}
+import shared.{DayChallenge, Helpers, TestData}
 
 object DayTwelve extends DayChallenge[Int, Int] with Helpers {
 
@@ -37,7 +37,9 @@ object DayTwelve extends DayChallenge[Int, Int] with Helpers {
     val (pipeString, connectorsString) = getTwoFromSplit(s, " <-> ")
     pipeString.toInt -> connectorsString.split(", ").toList.map(_.toInt).toSet
   }
+}
 
+object DayTwelveData extends TestData[Int, Int] {
   override val testData: List[String] =
     List(
       "0 <-> 2",

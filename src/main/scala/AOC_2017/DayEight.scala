@@ -1,8 +1,6 @@
 package AOC_2017
 
-import shared.{DayChallenge, Helpers}
-
-import scala.annotation.tailrec
+import shared.{DayChallenge, Helpers, TestData}
 
 object DayEight extends DayChallenge[Int, Int] with Helpers {
   //TODO: general refactor in here, bit of a mess
@@ -60,7 +58,9 @@ object DayEight extends DayChallenge[Int, Int] with Helpers {
      (vals.updated(modifyInstruction.variableName, newVal), Some(newVal))
    } else (vals, None)
   }
+}
 
+object DayEightData extends TestData[Int, Int] {
   override val expectedPartOne: Option[Int] = Some(1)
   override val testData: List[String] = List(
     "b inc 5 if a > 1",

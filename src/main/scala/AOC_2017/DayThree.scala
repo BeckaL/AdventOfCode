@@ -1,14 +1,8 @@
 package AOC_2017
 
-import shared.DayChallenge
+import shared.{DayChallenge, TestData}
 
 object DayThree extends DayChallenge[Int, Int] {
-  override val testData: List[String] = List("1024")
-  override val expectedPartOne: Option[Int] = Some(31)
-
-  override val testData2: Option[List[String]] = Some(List("800"))
-  override val expectedPartTwo: Option[Int] = Some(806)
-
   override def partOne(l: List[String]): Int = getSpiralNumber(l.head.toInt)
 
   private def sumFactorial(i: Int) = if (i == 0) 0 else (1 to i).toList.sum
@@ -24,4 +18,12 @@ object DayThree extends DayChallenge[Int, Int] {
   }
 
   override def partTwo(l: List[String]): Int = ???
+}
+
+object DayThreeData extends TestData[Int, Int] {
+  override val testData: List[String] = List("1024")
+  override val expectedPartOne: Option[Int] = Some(31)
+
+  override val testData2: Option[List[String]] = Some(List("800"))
+  override val expectedPartTwo: Option[Int] = Some(806)
 }

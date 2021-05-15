@@ -1,6 +1,6 @@
 package AOC_2017
 
-import shared.DayChallenge
+import shared.{DayChallenge, TestData}
 
 import scala.util.Try
 
@@ -74,6 +74,9 @@ object DayNineteen extends DayChallenge[String, Int] {
   case object UpOrDown extends Direction with UncertainDirection
   case object LeftOrRight extends Direction with UncertainDirection
 
+}
+
+object DayNineteenData extends TestData[String, Int] {
   override val expectedPartOne: Option[String] = Some("ABCDEF")
   override val expectedPartTwo: Option[Int] = Some(38)
   override val testData: List[String] =
@@ -83,5 +86,4 @@ object DayNineteen extends DayChallenge[String, Int] {
       " F---|----E|--+",
       "     |  |  |  D",
       "     +B-+  +--+")
-
 }

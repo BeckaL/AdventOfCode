@@ -1,6 +1,6 @@
 package AOC_2017
 
-import shared.DayChallenge
+import shared.{DayChallenge, TestData}
 
 object DayTen extends DayChallenge[Int, String]{
 
@@ -42,7 +42,9 @@ object DayTen extends DayChallenge[Int, String]{
   private def padToTwoDigits(s: String) = if (s.size == 1) s"0$s" else s
 
   private def getListSize(l: List[String]) = if (l == testData) 5 else 256
+}
 
+object DayTenData extends TestData[Int, String] {
   override val expectedPartOne: Option[Int] = Some(12)
   override val testData: List[String] = List("3,4,1,5")
   override val expectedPartTwo: Option[String] = Some("63960835bcdc130f0b66d7ff4f6a5a8e")

@@ -1,6 +1,6 @@
 package AOC_2017
 
-import shared.DayChallenge
+import shared.{DayChallenge, TestData}
 
 object DayEleven extends DayChallenge[Int, Int] {
 
@@ -44,8 +44,10 @@ object DayEleven extends DayChallenge[Int, Int] {
       (newCoord, biggestNumberOfSteps)
     }
   }._2
+}
 
+object DayElevenData extends TestData[Int, Int] {
   override val expectedPartOne: Option[Int] = Some(3)
   override val testData: List[String] = List("se,sw,se,sw,sw")
   override val expectedPartTwo: Option[Int] = Some(3)
-  }
+}

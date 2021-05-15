@@ -1,6 +1,6 @@
 package AOC_2017
 
-import shared.DayChallenge
+import shared.{DayChallenge, TestData}
 
 import scala.annotation.tailrec
 import scala.util.{Failure, Success, Try}
@@ -116,9 +116,8 @@ object DayEighteen extends DayChallenge[Long, Int] {
       }
     }
   }
-
-
-
+}
+object DayEighteenData extends TestData[Long, Int] {
   override val expectedPartOne: Option[Long] = Some(4)
   override val testData: List[String] = List(
     "set a 1",

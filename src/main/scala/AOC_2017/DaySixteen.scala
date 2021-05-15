@@ -1,6 +1,6 @@
 package AOC_2017
 
-import shared.{DayChallenge, Helpers}
+import shared.{DayChallenge, Helpers, TestData}
 
 object DaySixteen extends DayChallenge[String, String] with Helpers {
   override def partOne(l: List[String]): String =
@@ -57,7 +57,9 @@ object DaySixteen extends DayChallenge[String, String] with Helpers {
     if (l == testData) "abcde".toCharArray.toList else "abcdefghijklmnop".toCharArray.toList
 
   def targetIterations(l: List[String]): Long = if (l == testData) 2 else 1000000000
+}
 
+object DaySixteenData extends TestData[String, String] {
   override val expectedPartOne: Option[String] = Some("baedc")
   override val testData: List[String] = List("s1,x3/4,pe/b")
   override val expectedPartTwo: Option[String] = Some("ceadb")

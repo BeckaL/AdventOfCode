@@ -1,12 +1,8 @@
 package AOC_2017
 
-import shared.{DayChallenge, Helpers}
+import shared.{DayChallenge, Helpers, TestData}
 
 object DayThirteen extends DayChallenge[Int, Int] with Helpers {
-  override val expectedPartOne: Option[Int] = Some(24)
-  override val expectedPartTwo: Option[Int] = Some(10)
-  override val testData: List[String] = "0: 3\n1: 2\n4: 4\n6: 4".split("\n").toList
-
   override def partOne(l: List[String]): Int =
     l.map(Layer.from).filter(hasClashWithDelay(_, 0)).map(_.severity).sum
 
@@ -34,4 +30,10 @@ object DayThirteen extends DayChallenge[Int, Int] with Helpers {
       Layer(depthString.toInt, rangeString.toInt)
     }
   }
+}
+
+object DayThirteenData extends TestData[Int, Int] {
+  override val expectedPartOne: Option[Int] = Some(24)
+  override val expectedPartTwo: Option[Int] = Some(10)
+  override val testData: List[String] = "0: 3\n1: 2\n4: 4\n6: 4".split("\n").toList
 }
