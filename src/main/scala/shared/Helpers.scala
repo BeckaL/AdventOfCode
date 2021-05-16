@@ -26,12 +26,19 @@ trait Helpers {
     }
   }
 
-  def interpretNumberWithSign(str: String): Int = {
+  def interpretNumberWithSign(str: String): Int =
     str.head match {
       case '+' => str.tail.mkString.toInt
       case '-' => 0 - str.tail.mkString.toInt
     }
-  }
+
+    def interpretNumberWithOptionalSign(str: String): Int =
+      str.head match {
+        case '+' => str.tail.mkString.toInt
+        case '-' => 0 - str.tail.mkString.toInt
+        case _ => str.toInt
+      }
+
 
   def indicesOf(string: String, char: Char): List[Int] =
     string.zipWithIndex.foldLeft(List[Int]()) { case (indices, (stringChar, i)) => if (stringChar == char) indices :+ i else indices }
