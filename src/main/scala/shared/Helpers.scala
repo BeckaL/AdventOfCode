@@ -47,4 +47,11 @@ trait Helpers {
     l.zipWithIndex.foldLeft(List[Int]()) { case (indices, (stringChar, i)) => if (stringChar == str) indices :+ i else indices }
 
   def cycle(currentI: Int, len: Int): Int = (currentI + 1) % len
+
+  def cycle[A](l: List[A], element: A): A = l(cycle(l.indexOf(element), l.size))
+
+  def cycle[A](l: List[A], from: A, steps: Int): A = {
+    val fromIndex = l.indexOf(from)
+    l((fromIndex + steps) % l.size)
+  }
 }

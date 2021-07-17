@@ -20,7 +20,7 @@ object AOC {
     }
 
     //TODO: Make this relative
-    val bufferedSource = Source.fromFile(s"/Users/rebeccalelew/Projects/AdventOfCode/src/test/resources/$year/Day${args.head}Input.txt")
+    val bufferedSource = Source.fromFile(s"/Users/beckalelew/Projects/AdventOfCode/src/test/resources/$year/Day${args.head}Input.txt")
     val input = bufferedSource.getLines().toList
     bufferedSource.close()
     if (args.size > 2) {
