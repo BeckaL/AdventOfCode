@@ -30,6 +30,7 @@ object Controller2017 extends YearController {
     case "18" => (DayEighteen, DayEighteenData)
     case "19" => (DayNineteen, DayNineteenData)
     case "22" => (DayTwentyTwo, DayTwentyTwoData)
+    case "23" => (DayTwentyThree, DayTwentyThreeData)
     case _ => throw new RuntimeException("Didn't understand that day")
   }
 
