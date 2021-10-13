@@ -29,6 +29,7 @@ object Controller2017 extends YearController {
     case "17" => (DaySeventeen, DaySeventeenData)
     case "18" => (DayEighteen, DayEighteenData)
     case "19" => (DayNineteen, DayNineteenData)
+    case "21" => (DayTwentyOne, DayTwentyOneData)
     case "22" => (DayTwentyTwo, DayTwentyTwoData)
     case "23" => (DayTwentyThree, DayTwentyThreeData)
     case "24" => (DayTwentyFour, DayTwentyFourData)
