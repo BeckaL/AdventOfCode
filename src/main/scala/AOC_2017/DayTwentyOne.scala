@@ -3,6 +3,8 @@ package AOC_2017
 import shared.{DayChallenge, Helpers, TestData}
 
 object DayTwentyOne extends DayChallenge[Int, Int] with Helpers {
+  type Tile = List[String]
+
   override def partOne(l: List[String]): Int = {
     val rules = l.map(Rule.from)
 
@@ -19,16 +21,15 @@ object DayTwentyOne extends DayChallenge[Int, Int] with Helpers {
   }
 
   def translate(rules: List[Rule], iterations: Int) = {
-    def go(i: Int, currentTile: List[String]): List[String] =
+    def go(i: Int, currentTile: Tile): Tile =
       if (i == iterations) currentTile else {
-        val splitIntoSmallerTiles = currentTile.split
-        val resultTilesAfterTranslation = splitIntoSmallerTiles.map{ tileRow =>
+        val resultTilesAfterTranslation = currentTile.splitIntoSmallerTiles.map{ tileRow =>
           tileRow.map(tile => rules.find(_.matchesFrom(tile)).get.to)
         }
         val bigResultTile = joinTiles(resultTilesAfterTranslation)
         go(i + 1, bigResultTile)
       }
-    val startTile =   List(
+    val startTile = List(
       ".#.",
       "..#",
       "###"
@@ -36,9 +37,9 @@ object DayTwentyOne extends DayChallenge[Int, Int] with Helpers {
     go(0, startTile)
   }
 
-  def joinTiles(tileRows: List[List[List[String]]]): List[String] = tileRows.flatMap(tileRow => tileRow.head.indices.toList.map(i => tileRow.map(tile => tile(i)).mkString("")))
+  def joinTiles(tileRows: List[List[Tile]]): Tile = tileRows.flatMap(tileRow => tileRow.head.indices.toList.map(i => tileRow.map(tile => tile(i)).mkString("")))
 
-  case class Rule(from: List[String], to: List[String]) {
+  case class Rule(from: Tile, to: Tile) {
     val rotated90 = from.rotate90
     val rotated180 = rotated90.rotate90
     val rotated270 = rotated180.rotate90
@@ -46,25 +47,24 @@ object DayTwentyOne extends DayChallenge[Int, Int] with Helpers {
 
     val allIncludingFlipped = all.flatMap(t => List(t, t.flipV, t.flipH))
 
-    def matchesFrom(tile: List[String]) = allIncludingFlipped.contains(tile)
+    def matchesFrom(tile: Tile) = allIncludingFlipped.contains(tile)
   }
 
 
-
-  implicit class TileOps(tile: List[String]) {
+  implicit class TileOps(tile: Tile) {
     val indices = tile.indices.toList
 
-    def rotate90: List[String] =
+    def rotate90: Tile =
       indices.reverse.map(yIndex => indices.map(xIndex => tile(xIndex)(yIndex)).mkString)
 
-    def flipV: List[String] = tile.reverse
+    def flipV: Tile = tile.reverse
 
-    def flipH: List[String] = tile.map(_.reverse)
+    def flipH: Tile = tile.map(_.reverse)
 
-    def split: List[List[List[String]]] =
+    def splitIntoSmallerTiles: List[List[Tile]] =
       if (tile.size % 2 == 0) splitIntoTwos else splitIntoThrees
 
-    private def splitIntoTwos: List[List[List[String]]] =
+    private def splitIntoTwos: List[List[Tile]] =
       tile.grouped(2).toList.map{
         twoRows =>
         val first = twoRows.head
@@ -72,7 +72,7 @@ object DayTwentyOne extends DayChallenge[Int, Int] with Helpers {
           first.grouped(2).zip(second.grouped(2)).map{case(firstRow, secondRow) => List(firstRow, secondRow)}.toList
       }
 
-    private def splitIntoThrees: List[List[List[String]]] =
+    private def splitIntoThrees: List[List[Tile]] =
       tile.grouped(3).toList.map{
         threeRows =>
           val first = threeRows.head
