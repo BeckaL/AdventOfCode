@@ -22,6 +22,7 @@ trait YearController {
         }
       case "2" =>
         val ans = d.partTwo(testData.testData2.getOrElse(testData.testData))
+        println(ans)
         testData.expectedPartTwo match {
           case Some(expectedPart2) =>
             if (expectedPart2 == ans) {
