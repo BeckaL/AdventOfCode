@@ -45,7 +45,7 @@ object DayTwentyOne extends DayChallenge[Int, Int] with Helpers {
     val rotated270 = rotated180.rotate90
     val all = List(from, rotated90, rotated180, rotated270)
 
-    val allIncludingFlipped = all.flatMap(t => List(t, t.flipV, t.flipH))
+    val allIncludingFlipped = all.flatMap(t => List(t, t.flipV)) //Note do not also need hflip
 
     def matchesFrom(tile: Tile) = allIncludingFlipped.contains(tile)
   }
@@ -58,8 +58,6 @@ object DayTwentyOne extends DayChallenge[Int, Int] with Helpers {
       indices.reverse.map(yIndex => indices.map(xIndex => tile(xIndex)(yIndex)).mkString)
 
     def flipV: Tile = tile.reverse
-
-    def flipH: Tile = tile.map(_.reverse)
 
     def splitIntoSmallerTiles: List[List[Tile]] =
       if (tile.size % 2 == 0) splitIntoTwos else splitIntoThrees
