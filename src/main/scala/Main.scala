@@ -1,6 +1,7 @@
 import AOC_2015.Controller2015
 import AOC_2017.Controller2017
 import AOC_2020._
+import AOC_2021.Controller2021
 
 import scala.io.Source
 
@@ -10,12 +11,13 @@ object AOC {
     val year = if (args.size > 1) {
       args(1)
     } else {
-      "2020"
+      "2021"
     }
     val controller = year match {
       case "2020" => Controller2020
       case "2015" => Controller2015
       case "2017" => Controller2017
+      case "2021" => Controller2021
       case _ => throw new RuntimeException("Didn't understand that year")
     }
 
