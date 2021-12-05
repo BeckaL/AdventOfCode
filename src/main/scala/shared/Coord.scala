@@ -19,3 +19,10 @@ case class Coord(x: Int, y: Int) {
 
   def taxicabDistanceFromOrigin: Int = x.abs + y.abs
 }
+
+object Coord extends Helpers {
+  def from(str: String): Coord = {
+    val (x, y) = getTwoFromSplit(str, ",")
+    Coord(x.toInt, y.toInt)
+  }
+}
