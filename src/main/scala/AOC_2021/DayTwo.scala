@@ -8,14 +8,14 @@ object DayTwo extends DayChallenge[Int, Int] with Helpers {
 
   def getInstructions(l: List[String]): List[(String, Int)] =
     l.map(str => getTwoFromSplit(str, " "))
-      .map{ case (instruction, depthString) =>(instruction, depthString.toInt)}
+      .map { case (instruction, depthString) => (instruction, depthString.toInt) }
 
   def getFinalPosition(instructions: List[(String, Int)]): Int = {
     val (finalDepth, finalDistance) = instructions.foldLeft((0, 0)) { case ((currentDepth, currentDistance), instruction) =>
       instruction match {
         case ("forward", dist) => (currentDepth, currentDistance + dist)
-        case ("up", x) => (currentDepth - x, currentDistance)
-        case (_, x) => (currentDepth + x, currentDistance)
+        case ("up", x)         => (currentDepth - x, currentDistance)
+        case (_, x)            => (currentDepth + x, currentDistance)
       }
     }
     finalDepth * finalDistance
@@ -24,13 +24,14 @@ object DayTwo extends DayChallenge[Int, Int] with Helpers {
   override def partTwo(l: List[String]): Int = getFinalPositionWithAim(getInstructions(l))
 
   def getFinalPositionWithAim(instructions: List[(String, Int)]): Int = {
-    val (_, finalDepth, finalDistance) =  instructions.foldLeft((0, 0, 0)){ case ((currentAim, currentDepth, currentDistance), instruction) =>
-      instruction match {
+    val (_, finalDepth, finalDistance) =
+      instructions.foldLeft((0, 0, 0)) { case ((currentAim, currentDepth, currentDistance), instruction) =>
+        instruction match {
           case ("forward", dist) => (currentAim, currentDepth + (dist * currentAim), currentDistance + dist)
-          case ("up", x) => (currentAim - x, currentDepth, currentDistance)
-          case (_, x) => (currentAim + x, currentDepth, currentDistance)
+          case ("up", x)         => (currentAim - x, currentDepth, currentDistance)
+          case (_, x)            => (currentAim + x, currentDepth, currentDistance)
         }
-    }
+      }
     finalDepth * finalDistance
   }
 }

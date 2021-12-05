@@ -10,8 +10,8 @@ object DayOne extends DayChallenge[Int, Int] {
     getNumberOfIncreases(l.map(_.toInt).sliding(3).map(_.sum).toList)
 
   def getNumberOfIncreases(is: List[Int]): Int =
-  is.sliding(2).foldLeft(0){case (counter, intsToCompare) =>
-      if (intsToCompare(1) > intsToCompare(0)) counter +  1 else counter
+    is.sliding(2).foldLeft(0) { case (counter, intsToCompare) =>
+      if (intsToCompare(1) > intsToCompare(0)) counter + 1 else counter
     }
 
 }
