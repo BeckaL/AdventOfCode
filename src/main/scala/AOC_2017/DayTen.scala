@@ -23,8 +23,8 @@ object DayTen extends DayChallenge[Int, String]{
     indices.zip(valuesAtIndicesReversed).foldLeft(storedValues){case (map, (i, v)) => map.updated(i, v)}
   }
 
-  override def partTwo(l: List[String]): String = {
-    val lengths: List[Int] = l.head.map(_.toByte.toInt).toList ++ List(17, 31, 73, 47, 23)
+  def knotHash(s: String): String = {
+    val lengths: List[Int] = s.map(_.toByte.toInt).toList ++ List(17, 31, 73, 47, 23)
     val storedValues = (0 to 255).toList.map(i => i -> i).toMap
 
     val (_, _, endValues) = (0 to 63).foldLeft((0, 0, storedValues)){case ((position, skipSize, storedValues), _) =>
@@ -32,6 +32,8 @@ object DayTen extends DayChallenge[Int, String]{
     }
     combineGroupsOf16WithXor(endValues).map(i => padToTwoDigits(i.toHexString)).mkString
   }
+
+  override def partTwo(l: List[String]): String = knotHash(l.head)
 
   private def combineGroupsOf16WithXor(numbers: Map[Int, Int]): List[Int] = {
     val range = (0 to 15).toList

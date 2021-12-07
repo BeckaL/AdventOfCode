@@ -17,5 +17,5 @@ object DayTwentyFourData extends TestData[Int, Int] {
     """"""
   )
   override val expectedPartOne: Option[Int] = Some(0)
-  override val expectedPartTwo: Option[Int] = Some(-)
+  override val expectedPartTwo: Option[Int] = Some(0)
 }

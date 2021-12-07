@@ -23,8 +23,6 @@ object DayFifteen extends DayChallenge[Int, Int] {
     duel(aStart, bStart, 0, 0)
   }
 
-
-
   private def last16BitsMatch(a: Long, b: Long): Boolean =
     a.toBinaryString.takeRight(16) == b.toBinaryString.takeRight(16)
 
