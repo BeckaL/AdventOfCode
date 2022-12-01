@@ -11,7 +11,7 @@ object Controller2022 extends YearController {
   def getDayChallengeAndData(day: String): (DayChallenge[_, _], TestData[_, _]) =
     day match {
       case "1"  => (DayOne, DayOneData)
-//      case "2"  => (DayTwo, DayTwoData)
+      case "2"  => (DayTwo, DayTwoData)
 //      case "3"  => (DayThree, DayThreeData)
 //      case "4"  => (DayFour, DayFourData)
 //      case "5"  => (DayFive, DayFiveData)
