@@ -10,9 +10,9 @@ object Controller2022 extends YearController {
 
   def getDayChallengeAndData(day: String): (DayChallenge[_, _], TestData[_, _]) =
     day match {
-      case "1"  => (DayOne, DayOneData)
-      case "2"  => (DayTwo, DayTwoData)
-//      case "3"  => (DayThree, DayThreeData)
+      case "1" => (DayOne, DayOneData)
+      case "2" => (DayTwo, DayTwoData)
+      case "3" => (DayThree, DayThreeData)
 //      case "4"  => (DayFour, DayFourData)
 //      case "5"  => (DayFive, DayFiveData)
 //      case "6"  => (DaySix, DaySixData)
@@ -35,7 +35,7 @@ object Controller2022 extends YearController {
 //      case "23" => (DayTwentyThree, DayTwentyThreeData)
 //      case "24" => (DayTwentyFour, DayTwentyFourData)
 //      case "25" => (DayTwentyFive, DayTwentyFiveData)
-      case _    => throw new RuntimeException("Didn't understand that day")
+      case _ => throw new RuntimeException("Didn't understand that day")
     }
 
   override def printAnswers(day: String, input: List[String]): Unit = {
