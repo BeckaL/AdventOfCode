@@ -2,7 +2,7 @@ package AOC_2022
 
 import shared.{DayChallenge, TestData}
 
-object DayThree extends DayChallenge[Int, Int]{
+object DayThree extends DayChallenge[Int, Int] {
   override def partOne(l: List[String]): Int =
     l.map { line =>
       val (first, second) = line.toList.splitAt(line.length / 2)
@@ -20,6 +20,7 @@ object DayThree extends DayChallenge[Int, Int]{
     l.sliding(3, 3).map(group =>
       priority(group.head.intersect(group(1)).intersect(group(2)).head)
     ).sum
+}
 
 object DayThreeData extends TestData[Int, Int] {
   override val testData: List[String] = List(
