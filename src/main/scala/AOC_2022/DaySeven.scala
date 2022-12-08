@@ -17,12 +17,11 @@ object DaySeven extends DayChallenge[Int, Int] {
 
   private def getFileNamesToSizes(l: List[String]) = {
     val m = getMapOfDirNamesToValues(Map("/" -> Dir(None, List(), List())), l)
-    m.map { case (name, _) => name -> dirSize(m(name), m)}
+    m.map { case (name, dir) => name -> dirSize(dir, m)}
   }
 
-  private def getMapOfDirNamesToValues(startMap: Map[String, Dir], l: List[String]): Map[String, Dir] = {
-    l.drop(1).foldLeft(("/", startMap)) {
-      case ((currentDirName, m), instruction) =>
+  private def getMapOfDirNamesToValues(startMap: Map[String, Dir], l: List[String]): Map[String, Dir] =
+    l.drop(1).foldLeft(("/", startMap)) { case ((currentDirName, m), instruction) =>
         instruction.split(" ").toList match {
           case "$" :: "ls" :: Nil => (currentDirName, m)
           case "$" :: "cd" :: ".." :: Nil => (m.get(currentDirName).flatMap(_.parent).get, m)
@@ -33,12 +32,12 @@ object DaySeven extends DayChallenge[Int, Int] {
               .updated(currentDirName, currentDir.updateChildren(currentDirName + "/" + newDirName))
               .updated(currentDirName + "/" + newDirName, Dir(Some(currentDirName), List(), List()))
             )
-          case fileSize :: name :: Nil =>
+          case fileSize :: _ :: Nil =>
             val currentDir = m(currentDirName)
             (currentDirName, m.updated(currentDirName, currentDir.updateFiles(fileSize.toInt)))
         }
     }._2
-  }
+
 
   case class File(name: String, size: Int)
   case class Dir(parent: Option[String], children: List[String], files: List[Int]) {
