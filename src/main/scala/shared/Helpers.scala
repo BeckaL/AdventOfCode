@@ -30,6 +30,12 @@ trait Helpers {
     }
   }
 
+  def splitToStringAndInt(str: String, splitOn: String): (String, Int) =
+    str.split(splitOn) match {
+      case Array(s1, s2: String) => (s1, s2.toInt)
+      case a @ _                 => throw new RuntimeException(s"Should be an array of two things, was $a")
+    }
+
   def interpretNumberWithSign(str: String): Int =
     str.head match {
       case '+' => str.tail.mkString.toInt
