@@ -17,6 +17,8 @@ case class Coord(x: Int, y: Int) {
       case 'S' => Coord(x, y - n.toInt)
     }
 
+  def move(xAndYDeltas: (Int, Int)): Coord = this.copy(x + xAndYDeltas._1, y + xAndYDeltas._2)
+
   def neighbours: Set[Coord] =
     List((-1, -1), (1, -1), (1, 1), (-1, 1), (-1, 0), (0, -1), (0, 1), (1, 0)).map{case (xD, yD) => Coord(x + xD, y+yD)}.toSet
 
