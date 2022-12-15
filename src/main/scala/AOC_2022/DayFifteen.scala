@@ -6,15 +6,13 @@ object DayFifteen extends DayChallenge[Int, Long] with Helpers {
   override def partOne(l: List[String]): Int = {
     val row = if (l == DayFifteenData.testData) 10 else 2000000
     val sensorsAndRanges = sensors(l)
-    sensorsAndRanges
-      .flatMap { s => sensorRangeInRow(row, s).toSet }
-      .diff(sensorsAndRanges.map(_.beacon).filter(_.y == row).map(_.x))
-      .size
+    val beaconsInRow = sensorsAndRanges.map(_.beacon).count(_.y == row)
+    sensorsAndRanges.flatMap { s => sensorRangeInRow(row, s).toSet }.size - beaconsInRow
   }
 
   override def partTwo(l: List[String]): Long = {
     val max = if (l == DayFifteenData.testData) 20 else 4000000
-    val c = findCoordNotCoveredBySensor(sensors(l), 0, 0, max)
+    val c = findCoordNotCoveredBySensor(sensors(l), Coord(0, 0), max)
     c.x * 4000000L + c.y
   }
 
@@ -23,30 +21,25 @@ object DayFifteen extends DayChallenge[Int, Long] with Helpers {
     sensor.pos.x - eitherSide to sensor.pos.x + eitherSide
   }
 
-  private def findCoordNotCoveredBySensor(sensorsAndRanges: Set[Sensor], row: Int, col: Int, max: Int): Coord =
-    if (col > max)
-      findCoordNotCoveredBySensor(sensorsAndRanges, row + 1, 0, max)
-    else
-      sensorsAndRanges
-        .find { sensor => manhattanDistance(Coord(col, row), sensor.pos) <= sensor.range
-        } match {
-        case None => Coord(col, row)
-        case Some(sensor) =>
-          val nextXNotCoveredBySensor = sensorRangeInRow(row, sensor).last + 1
-          findCoordNotCoveredBySensor(sensorsAndRanges, row, nextXNotCoveredBySensor, max)
-      }
+  private def findCoordNotCoveredBySensor(sensors: Set[Sensor], c: Coord, max: Int): Coord =
+    sensors.find { sensor => manhattanDistance(c, sensor.pos) <= sensor.range } match {
+      case None => c
+      case Some(sensor) =>
+        val nextUnknownX = sensorRangeInRow(c.y, sensor).last + 1
+        val nextCoord = if (nextUnknownX > max) Coord(0, c.y + 1) else Coord(nextUnknownX, c.y)
+        findCoordNotCoveredBySensor(sensors, nextCoord, max)
+    }
 
   private def manhattanDistance(a: Coord, b: Coord): Int = (a.x - b.x).abs + (a.y - b.y).abs
 
   private def sensors(l: List[String]): Set[Sensor] =
     l.map(extractIntsWithOptionalSigns)
-      .map { ints =>
-        val sensor = Coord(ints(0), ints(1))
-        val beacon = Coord(ints(2), ints(3))
-        Sensor(sensor, beacon)
-      }.toSet
+      .map(ints => Sensor(Coord(ints(0), ints(1)), Coord(ints(2), ints(3))))
+      .toSet
 
-  case class Sensor(pos: Coord, beacon: Coord) { val range = manhattanDistance(pos, beacon)}
+  case class Sensor(pos: Coord, beacon: Coord) {
+    val range = manhattanDistance(pos, beacon)
+  }
 }
 
 object DayFifteenData extends TestData[Int, Long] {
