@@ -30,4 +30,7 @@ object Coord extends Helpers {
     val (x, y) = getTwoFromSplit(str, ",")
     Coord(x.toInt, y.toInt)
   }
+  def from(xAndY: (Int, Int)) = {
+    Coord(xAndY._1, xAndY._2)
+  }
 }
