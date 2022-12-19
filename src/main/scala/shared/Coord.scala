@@ -34,3 +34,20 @@ object Coord extends Helpers {
     Coord(xAndY._1, xAndY._2)
   }
 }
+
+
+case class Coord3D(x: Int, y: Int, z: Int) {
+  def manhattanDistanceToOrigin = x.abs + y.abs + z.abs
+  def neighbours: List[Coord3D] = List((-1, 0, 0), (1, 0, 0), (0, -1, 0), (0, 1, 0), (0, 0, -1), (0, 0, 1)).map{
+    case (xD, yD, zD) => Coord3D(x + xD, y + yD, z + zD)
+  }
+}
+
+object Coord3D {
+  def from(list: List[Int]): Coord3D = {
+    list match {
+      case x :: y :: z :: _ => Coord3D(x, y, z)
+      case _ => throw new RuntimeException(s"Needed three elements to make coord 3d, got $list")
+    }
+  }
+}
