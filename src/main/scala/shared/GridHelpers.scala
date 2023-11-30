@@ -27,6 +27,10 @@ trait GridHelpers {
   def getImmediateNeighbours(x: Int, y: Int, l: List[String]): List[Char] =
     adjacentVectors.map(v => (x + v._1, y + v._2)).filter { case (x, y) => l.isInGrid(x, y) }.map { case (x, y) => l(y)(x) }
 
+  def getNeighbourCoordNoDiagonals(x: Int, y: Int, l: List[String]): List[(Int, Int)] =
+    justAdjacentVectors.map(v => (x + v._1, y + v._2)).filter { case (x, y) => l.isInGrid(x, y) }
+
+  val justAdjacentVectors = List((-1, 0), (0, -1), (0, 1), (1, 0))
   val diagonalVectors = List((-1, -1), (1, -1), (1, 1), (-1, 1))
   val adjacentVectors = diagonalVectors ++ List((-1, 0), (0, -1), (0, 1), (1, 0))
 

@@ -3,6 +3,7 @@ import AOC_2017.Controller2017
 import AOC_2020._
 import AOC_2021.Controller2021
 import AOC_2022.Controller2022
+import AOC_2023.Controller2023
 
 import scala.io.Source
 
@@ -20,7 +21,8 @@ object AOC {
       case "2017" => Controller2017
       case "2021" => Controller2021
       case "2022" => Controller2022
-      case _ => throw new RuntimeException("Didn't understand that year")
+      case "2023" => Controller2023
+      case y => throw new RuntimeException(s"Didn't understand that year ${y}")
     }
 
     //TODO: Make this relative
