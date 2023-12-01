@@ -16,11 +16,11 @@ object DayFifteen extends DayChallenge[Long, Long] {
       lastSaid
     } else {
       val newI = if (goNumber < starts.size) {
-        starts(goNumber.toInt)
+        starts(goNumber.toInt).toLong
       } else {
         said(lastSaid) match {
-          case _ :: Nil => 0
-          case head :: tail => head - tail.head
+          case _ :: Nil => 0L
+          case head :: tail => (head - tail.head).toLong
         }
       }
       go(appendOrAdd(newI, goNumber, said), newI, goNumber + 1)

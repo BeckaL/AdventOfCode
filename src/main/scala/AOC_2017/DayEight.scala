@@ -5,14 +5,14 @@ import shared.{DayChallenge, Helpers, TestData}
 object DayEight extends DayChallenge[Int, Int] with Helpers {
   //TODO: general refactor in here, bit of a mess
 
-  override def partOne(l: List[String]): Int =  {
-      l.foldRight(Map.empty[String, Int]){ case (stringInstruction, currentMap) =>
-          updateStateReturningMapAndNewValue(stringInstruction, currentMap)._1
-      }.values.max
+  override def partOne(l: List[String]): Int = {
+    l.foldRight(Map.empty[String, Int]) { case (stringInstruction, currentMap) =>
+      updateStateReturningMapAndNewValue(stringInstruction, currentMap)._1
+    }.values.max
   }
 
   override def partTwo(l: List[String]): Int = {
-    l.foldRight((Map.empty[String, Int], Option.empty[Int])){case (stringInstruction, (currentMap, maybeHighest)) =>
+    l.foldRight((Map.empty[String, Int], Option.empty[Int])) { case (stringInstruction, (currentMap, maybeHighest)) =>
       val (newMap, maybeNewValue) = updateStateReturningMapAndNewValue(stringInstruction, currentMap)
       val newMaybeHighest = (maybeNewValue, maybeHighest) match {
         case (Some(newValue), Some(highest)) => if (newValue < highest) maybeHighest else maybeNewValue
@@ -39,14 +39,21 @@ object DayEight extends DayChallenge[Int, Int] with Helpers {
 
   trait ModifyInstruction {
     val variableName: String
+
     def modify: Int => Int
   }
-  case class Increment(override val variableName: String, by: Int) extends ModifyInstruction { def modify = v => v + by }
-  case class Decrease(override val variableName: String, by: Int) extends ModifyInstruction {def modify = v => v - by}
 
-  private def interpret(variable: String, sign:String, than: Int, modifyInstruction: ModifyInstruction, vals: Map[String, Int]): (Map[String, Int], Option[Int]) = {
+  case class Increment(override val variableName: String, by: Int) extends ModifyInstruction {
+    def modify = v => v + by
+  }
+
+  case class Decrease(override val variableName: String, by: Int) extends ModifyInstruction {
+    def modify = v => v - by
+  }
+
+  private def interpret(variable: String, sign: String, than: Int, modifyInstruction: ModifyInstruction, vals: Map[String, Int]): (Map[String, Int], Option[Int]) = {
     val v = vals.getOrElse(variable, 0)
-   if(sign match {
+    if (sign match {
       case ">" => v > than
       case ">=" => v >= than
       case "<" => v < than
@@ -54,9 +61,9 @@ object DayEight extends DayChallenge[Int, Int] with Helpers {
       case "==" => v == than
       case "!=" => v != than
     }) {
-     val newVal = modifyInstruction.modify(vals.getOrElse(modifyInstruction.variableName, 0))
-     (vals.updated(modifyInstruction.variableName, newVal), Some(newVal))
-   } else (vals, None)
+      val newVal = modifyInstruction.modify(vals.getOrElse(modifyInstruction.variableName, 0))
+      (vals.updated(modifyInstruction.variableName, newVal), Some(newVal))
+    } else (vals, None)
   }
 }
 

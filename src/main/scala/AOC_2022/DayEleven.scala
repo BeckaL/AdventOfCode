@@ -35,10 +35,10 @@ object DayEleven extends DayChallenge[Long, Long] with Helpers {
       val index = firstIFrom(0)
       val items = ints(1).map(i => i.toLong)
       val operation = monkeyLines(2).trim().split(" ").takeRight(2).toList match {
-        case "*" :: "old" :: Nil => x: Long => x * x
-        case "*" :: i :: Nil     => x: Long => x * i.toLong
-        case "+" :: "old" :: Nil => x: Long => x + x
-        case "+" :: i :: Nil     => x: Long => x + i.toLong
+        case "*" :: "old" :: Nil => (x: Long) => x * x
+        case "*" :: i :: Nil     => (x: Long) => x * i.toLong
+        case "+" :: "old" :: Nil => (x: Long) => x + x
+        case "+" :: i :: Nil     => (x: Long) => x + i.toLong
       }
       index -> Monkey(index, items, operation, firstIFrom(3), firstIFrom(4), firstIFrom(5), 0)
     }.toMap

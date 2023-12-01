@@ -41,7 +41,7 @@ object DayEighteen extends DayChallenge[Long, Long] with Helpers {
       val firstPlus = sumParts.indexOf("+")
       val replacement = evaluateOperation(sumParts(firstPlus - 1), sumParts(firstPlus + 1), "+")
       val newParts = replaceList(sumParts, replacement, firstPlus)
-      if (sumParts.count(_ == '+') == 1) newParts else evaluatePluses(newParts)
+      if (sumParts.count(_ == "+") == 1) newParts else evaluatePluses(newParts)
     }
 
   private def getLastOpenBracketWithClose(sumString: String): (Int, Int) = {
