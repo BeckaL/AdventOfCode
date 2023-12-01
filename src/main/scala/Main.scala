@@ -13,7 +13,7 @@ object AOC {
     val year = if (args.size > 1) {
       args(1)
     } else {
-      "2022"
+      "2023"
     }
     val controller = year match {
       case "2020" => Controller2020
