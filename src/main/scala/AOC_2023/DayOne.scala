@@ -6,37 +6,23 @@ object DayOne extends DayChallenge[Int, Int]{
   override def partOne(l: List[String]): Int = 
     l.map(getCalibrationValue).sum
 
-  private def getCalibrationValue(line: String): Int = {
+  private def getCalibrationValue(line: String): Int =
     val numbers = line.filter(c => c.isDigit)
     s"${numbers.head}${numbers.last}".toInt
-  }
 
   override def partTwo(l: List[String]): Int =
     l.map(getCalibrationValuePart2).sum
 
-  private def getCalibrationValuePart2(line: String): Int = {
-    s"${findDigit(line)}${findDigit(line.reverse, true)}".toInt
-  }
+  private def getCalibrationValuePart2(line: String): Int =
+    s"${findFirstDigit(line, digits)}${findFirstDigit(line.reverse, reverseDigits)}".toInt
 
-  private def findDigit(s: String, reverse: Boolean = false): String = {
-    val firstDigit = s.find(c => c.isDigit)
-    val indexOfFirstDigit = firstDigit match {
-      case Some(d) => s.indexOf(d)
-      case None => -1
-    }
-    val digitsToSearch = if (reverse) reverseDigits else digits
-    val possibleDigitsAndIndices = digitsToSearch.map(i => (i, s.indexOf(i))).filterNot(t => t._2 == -1)
-    if (possibleDigitsAndIndices.nonEmpty) {
-      val (numberAsString, indexOfFirstStringDigit) = possibleDigitsAndIndices.minBy(_._2)
-      if (indexOfFirstDigit < indexOfFirstStringDigit && indexOfFirstDigit != -1) {
-        s(indexOfFirstDigit).toString
-      } else {
-        (digitsToSearch.indexOf(numberAsString) + 1).toString
-      }
-    } else {
-      s(indexOfFirstDigit).toString
-    }
-  }
+  private def findFirstDigit(s: String, digitsAsStrings: List[String]): String =
+    if (s.head.isDigit)
+      s.head.toString
+    else
+      digitsAsStrings.find(digitString => s.startsWith(digitString)) match
+        case Some(digitString) => (digitsAsStrings.indexOf(digitString) + 1).toString
+        case None => findFirstDigit(s.tail, digitsAsStrings)
 
   private val digits = List("one", "two", "three", "four", "five", "six", "seven", "eight", "nine")
   private val reverseDigits = digits.map(_.reverse)
