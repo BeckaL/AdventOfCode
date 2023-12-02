@@ -12,6 +12,7 @@ object Controller2023 extends YearController {
   def getDayChallengeAndData(day: String): (DayChallenge[_, _], TestData[_, _]) =
     day match {
       case "1" => (DayOne, DayOneData)
+      case "2" => (DayTwo, DayTwoData)
     }
 
   override def printAnswers(day: String, input: List[String]): Unit = {
