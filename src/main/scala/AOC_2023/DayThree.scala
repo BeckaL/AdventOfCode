@@ -4,25 +4,24 @@ import shared.{Coord, DayChallenge, GridHelpers, TestData}
 
 import scala.annotation.tailrec
 
-case class Engine(numbers: List[(Int, List[Coord])], gears: List[Coord], otherSymbols: List[Coord]) {
-  def allSymbols = gears ++ otherSymbols
-
-  def withNumber(numberAndCoords: (Int, List[Coord])) = this.copy(numbers = numberAndCoords +: numbers)
-
-  def withGear(c: Coord) = this.copy(gears = c +: gears)
-
-  def withSymbol(c: Coord) = this.copy(otherSymbols = c +: otherSymbols)
-}
-
-object DayThree extends DayChallenge[Int, Int] with GridHelpers {
+object DayThree extends DayChallenge[Int, Long] with GridHelpers {
   override def partOne(l: List[String]): Int =
-    val engine = parseEngine(l, 0, 0, Engine(List(), List(), List()))
-    engine.numbers
+    val engine = parseEngine(l, 0, 0, emptyEngine)
+    engine
+      .numbers
       .collect { case (value, coords) if isAdjacentToSymbol(coords, engine.allSymbols) => value }
       .sum
 
+  override def partTwo(l: List[String]): Long =
+    val engine = parseEngine(l, 0, 0, emptyEngine)
+    engine.gears.map(getGearSum(_, engine.numbers)).sum
+    
   private def isAdjacentToSymbol(numberCoords: List[Coord], allSymbols: List[Coord]): Boolean =
     numberCoords.exists(_.neighbours.exists(allSymbols.contains))
+
+  private def getGearSum(gear: Coord, numbers: List[(Int, List[Coord])]): Long =
+    val numberNeighbours = numbers.collect { case (n, coords) if gear.neighbours.exists(coords.contains(_)) => n }
+    if (numberNeighbours.size == 2) numberNeighbours.map(_.toLong).product else 0L
 
   @tailrec
   private def parseEngine(l: List[String], x: Int, y: Int, engine: Engine): Engine =
@@ -39,17 +38,21 @@ object DayThree extends DayChallenge[Int, Int] with GridHelpers {
       case _ => parseEngine(l, endX + 1, y, updatedEngine)
 
   private def parseNumber(l: List[String], x: Int, y: Int): (Int, List[Coord]) =
-    val numberString = l.rowAt(y).mkString("").substring(x).takeWhile(_.isDigit)
+    val numberString = l(y).mkString("").substring(x).takeWhile(_.isDigit)
     val coords = (x until x + numberString.size).toList.map(i => Coord(i, y))
     (numberString.toInt, coords)
 
-
-  override def partTwo(l: List[String]): Int = {
-    2
-  }
+  private val emptyEngine = Engine(List(), List(), List())
 }
 
-object DayThreeData extends TestData[Int, Int] {
+case class Engine(numbers: List[(Int, List[Coord])], gears: List[Coord], otherSymbols: List[Coord]) {
+  def allSymbols = gears ++ otherSymbols
+  def withNumber(numberAndCoords: (Int, List[Coord])) = this.copy(numbers = numberAndCoords +: numbers)
+  def withGear(c: Coord) = this.copy(gears = c +: gears)
+  def withSymbol(c: Coord) = this.copy(otherSymbols = c +: otherSymbols)
+}
+
+object DayThreeData extends TestData[Int, Long] {
   override val testData: List[String] = List(
     "467..114..",
     "...*......",
@@ -63,5 +66,5 @@ object DayThreeData extends TestData[Int, Int] {
     ".664.598.."
   )
   override val expectedPartOne: Option[Int] = Some(4361)
-  override val expectedPartTwo: Option[Int] = Some(0)
+  override val expectedPartTwo: Option[Long] = Some(467835L)
 }

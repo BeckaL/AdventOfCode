@@ -21,7 +21,7 @@ case class Coord(x: Int, y: Int) {
 
   def neighbours: Set[Coord] =
     List((-1, -1), (1, -1), (1, 1), (-1, 1), (-1, 0), (0, -1), (0, 1), (1, 0)).map{case (xD, yD) => Coord(x + xD, y+yD)}.toSet
-
+    
   def taxicabDistanceFromOrigin: Int = x.abs + y.abs
 }
 
