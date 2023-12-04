@@ -1,0 +1,67 @@
+package AOC_2023
+
+import shared.{Coord, DayChallenge, GridHelpers, TestData}
+
+import scala.annotation.tailrec
+
+case class Engine(numbers: List[(Int, List[Coord])], gears: List[Coord], otherSymbols: List[Coord]) {
+  def allSymbols = gears ++ otherSymbols
+
+  def withNumber(numberAndCoords: (Int, List[Coord])) = this.copy(numbers = numberAndCoords +: numbers)
+
+  def withGear(c: Coord) = this.copy(gears = c +: gears)
+
+  def withSymbol(c: Coord) = this.copy(otherSymbols = c +: otherSymbols)
+}
+
+object DayThree extends DayChallenge[Int, Int] with GridHelpers {
+  override def partOne(l: List[String]): Int =
+    val engine = parseEngine(l, 0, 0, Engine(List(), List(), List()))
+    engine.numbers
+      .collect { case (value, coords) if isAdjacentToSymbol(coords, engine.allSymbols) => value }
+      .sum
+
+  private def isAdjacentToSymbol(numberCoords: List[Coord], allSymbols: List[Coord]): Boolean =
+    numberCoords.exists(_.neighbours.exists(allSymbols.contains))
+
+  @tailrec
+  private def parseEngine(l: List[String], x: Int, y: Int, engine: Engine): Engine =
+    val (endX, updatedEngine) = l(y)(x) match
+      case d if d.isDigit =>
+        val n = parseNumber(l, x, y)
+        (n._2.map(_.x).max, engine.withNumber(n))
+      case '*' => (x, engine.withGear(Coord(x, y)))
+      case '.' => (x, engine)
+      case _ => (x, engine.withSymbol(Coord(x, y)))
+    (endX, y) match
+      case (x, y) if x == l.width - 1 && y == l.height - 1 => updatedEngine
+      case (x, _) if x == l.width - 1 => parseEngine(l, 0, y + 1, updatedEngine)
+      case _ => parseEngine(l, endX + 1, y, updatedEngine)
+
+  private def parseNumber(l: List[String], x: Int, y: Int): (Int, List[Coord]) =
+    val numberString = l.rowAt(y).mkString("").substring(x).takeWhile(_.isDigit)
+    val coords = (x until x + numberString.size).toList.map(i => Coord(i, y))
+    (numberString.toInt, coords)
+
+
+  override def partTwo(l: List[String]): Int = {
+    2
+  }
+}
+
+object DayThreeData extends TestData[Int, Int] {
+  override val testData: List[String] = List(
+    "467..114..",
+    "...*......",
+    "..35..633.",
+    "......#...",
+    "617*......",
+    ".....+.58.",
+    "..592.....",
+    "......755.",
+    "...$.*....",
+    ".664.598.."
+  )
+  override val expectedPartOne: Option[Int] = Some(4361)
+  override val expectedPartTwo: Option[Int] = Some(0)
+}
