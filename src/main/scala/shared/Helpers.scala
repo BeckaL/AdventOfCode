@@ -68,6 +68,7 @@ trait Helpers {
     if (fromN < toN) (fromN to toN).toList else (toN to fromN).reverse.toList
 
   def extractInts(s: String): List[Int] = """\d+""".r.findAllIn(s).toList.map(_.toInt)
+  def extractLongs(s: String): List[Long] = """\d+""".r.findAllIn(s).toList.map(_.toLong)
 
   def extractIntsWithOptionalSigns(s: String): List[Int] = """[-\+]?\d+""".r.findAllIn(s).toList.map(interpretNumberWithOptionalSign)
 }
