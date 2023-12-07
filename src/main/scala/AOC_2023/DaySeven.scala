@@ -8,15 +8,11 @@ object DaySeven extends DayChallenge[Long, Int] with Helpers {
       .map(getTwoFromSplit(_, " "))
       .map((s, score) => (s, getHandType(s), score))
       .sortBy{case (hand, handType, _) => (handType.rank, secondaryRank(hand))}
-      .reverse
     orderedHandTypes.zipWithIndex.map{ case ((_, _, score), index) =>  score.toLong * (index + 1)}.sum
 
-
   private def secondaryRank(hand: String) =
-    val possibleCards = List('A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2')
-    hand.map(card => possibleCards.indexOf(card)).zipWithIndex.map((cardIndex, handIndex) =>
-      ((possibleCards.size - cardIndex) * Math.pow(10, 4 - handIndex)).toInt * -1
-    ).sum
+    val possibleCards = List('2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A')
+    hand.map(c => padDigit(possibleCards.indexOf(c), 2)).mkString("").toInt
 
   private def getHandType(s: String): HandType =
     s.toSet.toList.map(char => s.count(_ == char)).sorted.reverse match
@@ -33,13 +29,13 @@ object DaySeven extends DayChallenge[Long, Int] with Helpers {
 }
 
 trait HandType { val rank: Int }
-case object FiveOfAKind extends HandType { val rank = 1 }
-case object FourOfAKind extends HandType { val rank = 2 }
-case object FullHouse extends HandType { val rank = 3 }
+case object FiveOfAKind extends HandType { val rank = 7 }
+case object FourOfAKind extends HandType { val rank = 6 }
+case object FullHouse extends HandType { val rank = 5 }
 case object ThreeOfAKind extends HandType { val rank = 4 }
-case object TwoPair extends HandType { val rank = 5 }
-case object OnePair extends HandType { val rank = 6 }
-case object HighCard extends HandType { val rank = 7 }
+case object TwoPair extends HandType { val rank = 3 }
+case object OnePair extends HandType { val rank = 2 }
+case object HighCard extends HandType { val rank = 1 }
 
 
 

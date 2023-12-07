@@ -71,4 +71,10 @@ trait Helpers {
   def extractLongs(s: String): List[Long] = """\d+""".r.findAllIn(s).toList.map(_.toLong)
 
   def extractIntsWithOptionalSigns(s: String): List[Int] = """[-\+]?\d+""".r.findAllIn(s).toList.map(interpretNumberWithOptionalSign)
+
+  def padDigit(i: Int, to: Int): String =
+    val s = i.toString
+    if (s.size > 2)
+      throw new RuntimeException(s"needed i to be less than ${to} digits")
+    if (s.size == to) s else s"0$s"
 }
