@@ -2,14 +2,14 @@ package AOC_2023
 
 import shared.{DayChallenge, Helpers, TestData}
 
-object DaySeven extends DayChallenge[Int, Int] with Helpers {
-  override def partOne(l: List[String]): Int =
+object DaySeven extends DayChallenge[Long, Int] with Helpers {
+  override def partOne(l: List[String]): Long =
     val orderedHandTypes = l
       .map(getTwoFromSplit(_, " "))
       .map((s, score) => (s, getHandType(s), score))
       .sortBy{case (hand, handType, _) => (handType.rank, secondaryRank(hand))}
       .reverse
-    orderedHandTypes.zipWithIndex.map{ case ((_, _, score), index) =>  score.toInt * (index + 1)}.sum
+    orderedHandTypes.zipWithIndex.map{ case ((_, _, score), index) =>  score.toLong * (index + 1)}.sum
 
 
   private def secondaryRank(hand: String) =
@@ -21,7 +21,7 @@ object DaySeven extends DayChallenge[Int, Int] with Helpers {
   private def getHandType(s: String): HandType =
     s.toSet.toList.map(char => s.count(_ == char)).sorted.reverse match
       case 5 :: _ => FiveOfAKind
-      case 4 :: 1 :: _  => FourOfAKind
+      case 4 :: _  => FourOfAKind
       case 3 :: 2 :: _ => FullHouse
       case 3 :: _ => ThreeOfAKind
       case 2 :: 2 :: _ => TwoPair
