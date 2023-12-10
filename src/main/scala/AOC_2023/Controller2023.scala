@@ -19,6 +19,7 @@ object Controller2023 extends YearController {
       case "6" => (DaySix, DaySixData)
       case "7" => (DaySeven, DaySevenData)
       case "8" => (DayEight, DayEightData)
+      case "9" => (DayNine, DayNineData)
     }
 
   override def printAnswers(day: String, input: List[String]): Unit = {
