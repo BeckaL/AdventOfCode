@@ -17,6 +17,14 @@ case class Coord(x: Int, y: Int) {
       case 'S' => Coord(x, y - n.toInt)
     }
 
+  def moveYIsReversed(direction: Char, n: Int): Coord =
+    direction match {
+      case 'N' => Coord(x, y - n)
+      case 'E' => Coord(x + n, y)
+      case 'W' => Coord(x - n.toInt, y)
+      case 'S' => Coord(x, y + n.toInt)
+    }
+
   def move(xAndYDeltas: (Int, Int)): Coord = this.copy(x + xAndYDeltas._1, y + xAndYDeltas._2)
 
   def neighbours: Set[Coord] =
