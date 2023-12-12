@@ -2,29 +2,30 @@ package AOC_2023
 
 import shared.{DayChallenge, Helpers, TestData, Coord}
 
-object DayEleven extends DayChallenge[Int, Int] with Helpers {
-  override def partOne(l: List[String]): Int =
-    val expandedWithRows = expandRows(l, List())
-    val expandedWithColumns = expandRows(expandedWithRows.transpose.map(_.mkString("")), List()).transpose.map(_.mkString(""))
-    findAllPaths(findStars(expandedWithColumns), List()).sum
+object DayEleven extends DayChallenge[Long, Long] with Helpers {
+  override def partOne(l: List[String]): Long =
+    findAllPaths(findStars(l), emptyRowNumbers(l), emptyColumnNumbers(l), 1L).sum
 
-  override def partTwo(l: List[String]): Int =
-    2
+  override def partTwo(l: List[String]): Long =
+    findAllPaths(findStars(l), emptyRowNumbers(l), emptyColumnNumbers(l), 999999L).sum
 
-  private def findAllPaths(remainingStars: List[Coord], currentPaths: List[Int]): List[Int] =
+  private def emptyRowNumbers(l: List[String]) =
+    l.indices.filter(y => l(y).mkString("").forall(_ == '.')).toList
+
+  private def emptyColumnNumbers(l: List[String]) =
+    l.head.indices.filter(x => l.map(_(x)).mkString("").forall(_ == '.')).toList
+
+  private def findAllPaths(remainingStars: List[Coord], emptyYIndices: List[Int], emptyXIndices: List[Int], multiplier: Long, currentPaths: List[Long] = List()): List[Long] =
     remainingStars match
       case lastStar :: Nil => currentPaths
       case nextStar :: otherStars =>
-        val newPaths = otherStars.map(_.manhattanDistanceFrom(nextStar))
-        findAllPaths(otherStars, currentPaths ++ newPaths)
+        val newPaths = otherStars.map(distanceFrom(_, nextStar, emptyYIndices, emptyXIndices, multiplier))
+        findAllPaths(otherStars, emptyYIndices, emptyXIndices, multiplier, currentPaths ++ newPaths)
 
-  private def expandRows(remaining: List[String], newRows: List[String]): List[String] =
-    remaining match
-      case Nil => newRows
-      case firstRow :: newRemaining if firstRow.forall(_ == '.') =>
-        val updatedRows = newRows ++ List(firstRow, firstRow)
-        expandRows(newRemaining, updatedRows)
-      case firstRow :: newRemaining => expandRows(newRemaining, newRows :+ firstRow)
+  private def distanceFrom(c1: Coord, c2: Coord, emptyYIndices: List[Int], emptyXIndices: List[Int], multiplier: Long): Long =
+    c1.manhattanDistanceFrom(c2) +
+    emptyYIndices.count(y => (y > c1.y && y < c2.y) || (y > c2.y && y < c1.y)) * multiplier +
+    emptyXIndices.count(x => (x > c1.x && x < c2.x) || (x > c2.x && x < c1.x)) * multiplier
 
   private def findStars(rows: List[String]): List[Coord] =
     rows.zipWithIndex.flatMap(
@@ -32,7 +33,7 @@ object DayEleven extends DayChallenge[Int, Int] with Helpers {
     )
 }
 
-object DayElevenData extends TestData[Int, Int] {
+object DayElevenData extends TestData[Long, Long] {
   override val testData: List[String] = List(
     "...#......",
     ".......#..",
@@ -45,6 +46,6 @@ object DayElevenData extends TestData[Int, Int] {
     ".......#..",
     "#...#....."
   )
-  override val expectedPartOne: Option[Int] = Some(374)
-  override val expectedPartTwo: Option[Int] = Some(0)
+  override val expectedPartOne: Option[Long] = Some(374L)
+  override val expectedPartTwo: Option[Long] = None
 }
