@@ -28,9 +28,18 @@ case class Coord(x: Int, y: Int) {
   def move(xAndYDeltas: (Int, Int)): Coord = this.copy(x + xAndYDeltas._1, y + xAndYDeltas._2)
 
   def neighbours: Set[Coord] =
-    List((-1, -1), (1, -1), (1, 1), (-1, 1), (-1, 0), (0, -1), (0, 1), (1, 0)).map{case (xD, yD) => Coord(x + xD, y+yD)}.toSet
-    
+    List((-1, -1), (1, -1), (1, 1), (-1, 1), (-1, 0), (0, -1), (0, 1), (1, 0)).map { case (xD, yD) => Coord(x + xD, y + yD) }.toSet
+
   def taxicabDistanceFromOrigin: Int = x.abs + y.abs
+
+  def nextCoordInGrid(g: List[String]): Option[Coord] =
+    if (x == g.head.length - 1)
+      if (y == g.length - 1)
+        None
+      else
+        Some(Coord(0, y + 1))
+    else
+      Some(Coord(x + 1, y))
 }
 
 object Coord extends Helpers {
@@ -38,6 +47,7 @@ object Coord extends Helpers {
     val (x, y) = getTwoFromSplit(str, ",")
     Coord(x.toInt, y.toInt)
   }
+
   def from(xAndY: (Int, Int)) = {
     Coord(xAndY._1, xAndY._2)
   }
