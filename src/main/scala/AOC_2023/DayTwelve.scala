@@ -20,6 +20,48 @@ object DayTwelve extends DayChallenge[Int, Int] with Helpers {
       .count(stringMatchesNumbers(_, numbers))
   }
 
+  def countPossibilitiesNew(s: String, numbers: List[Int]): Int = {
+    println(s"counting possibilities with s $s and numbers $numbers")
+    val knownCount = s.count(_ == '#')
+    val unknownCount = s.count(_ == '?')
+    val numberOfUnknownThatMustBeHashes = numbers.sum - knownCount
+    if (numberOfUnknownThatMustBeHashes == unknownCount) {
+      if (checkIfArrangementPossible(s, numbers)) 1 else 0
+    } else if (numberOfUnknownThatMustBeHashes < unknownCount) {
+      val firstUnknown = s.indexOf("?") //what if this is -1? Could it be with the above checks?
+      println(firstUnknown)
+      val firstKnown = s.indexOf("#")
+      if (firstKnown >= 0 && firstKnown < firstUnknown) {
+        if (checkIfPossible(s.substring(firstKnown), numbers)) {
+          if (numbers.size == 1) {
+            1
+          } else {
+            countPossibilitiesNew(s.substring(firstKnown + numbers.head + 1), numbers.tail)
+          }
+        } else 0
+      } else {
+        val replaced = s.updated(firstUnknown, '#')
+        val possible = checkIfPossible(replaced.substring(firstUnknown), numbers)
+        if (possible) {
+//          println("is possible")
+          if (numbers.size == 1)
+            1 + countPossibilitiesNew(s.substring(firstUnknown + 1), numbers)
+          else countPossibilitiesNew(s.substring(firstUnknown + numbers.head + 1), numbers.tail) + countPossibilitiesNew(s.substring(firstUnknown + 1), numbers)
+        } else countPossibilitiesNew(s.tail, numbers)
+      }
+    } else 0
+  }
+
+  private def checkIfArrangementPossible(s: String, numbers: List[Int]) =
+    stringMatchesNumbers(s.replaceAll("\\?", "#"), numbers)
+
+  private def checkIfPossible(sFromFirstKnown: String, numbers: List[Int]) =
+    val (nextNumber, others) = (numbers.head, if (numbers.size == 1) List() else numbers.tail)
+    val slice = sFromFirstKnown.slice(0, nextNumber)
+    val r = slice.length == nextNumber && slice.forall(char => char == '?' || char == '#') && (sFromFirstKnown.size == nextNumber || sFromFirstKnown(nextNumber) != '#')
+//    println(s"possible is $r")
+    r
+
   private def replaceUnknownCharsInString(s: String, toReplace: List[Char]): String =
     toReplace match
       case Nil => s
