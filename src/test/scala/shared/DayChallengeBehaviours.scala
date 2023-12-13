@@ -1,10 +1,11 @@
 package shared
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 
 trait DayChallengeBehaviours[A, B] extends Matchers with FileReader with TableDrivenPropertyChecks {
-  this: FlatSpec =>
+  this: AnyFlatSpec =>
   val day: String
   val file: String
   val dayChallenge: DayChallenge[A, B]

@@ -1,9 +1,9 @@
 package AOC_2020
 
-import org.scalatest.FlatSpec
+import org.scalatest.flatspec.AnyFlatSpec
 import shared.{DayChallenge, DayChallengeBehaviours}
 
-class DayThirteenTest extends FlatSpec with DayChallengeBehaviours[Int, Long] {
+class DayThirteenTest extends AnyFlatSpec with DayChallengeBehaviours[Int, Long] {
   override val day = "Day thirteen"
   override val file: String = "Day13Input"
   override val dayChallenge: DayChallenge[Int,Long] = DayThirteen

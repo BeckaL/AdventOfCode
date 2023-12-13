@@ -1,9 +1,11 @@
 package AOC_2020
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.prop.TableDrivenPropertyChecks
 import shared.FileReader
 
-class DayTwoTest extends FlatSpec with Matchers with FileReader {
+class DayTwoTest extends AnyFlatSpec with Matchers with FileReader {
   "Day two" should "work on test data" in {
     DayTwo.partOne(testInput) shouldBe 2
   }

@@ -58,7 +58,8 @@ object Coord extends Helpers {
 
 case class Coord3D(x: Int, y: Int, z: Int) {
   def manhattanDistanceToOrigin = x.abs + y.abs + z.abs
-  def neighbours: List[Coord3D] = List((-1, 0, 0), (1, 0, 0), (0, -1, 0), (0, 1, 0), (0, 0, -1), (0, 0, 1)).map{
+
+  def neighbours: List[Coord3D] = List((-1, 0, 0), (1, 0, 0), (0, -1, 0), (0, 1, 0), (0, 0, -1), (0, 0, 1)).map {
     case (xD, yD, zD) => Coord3D(x + xD, y + yD, z + zD)
   }
 }

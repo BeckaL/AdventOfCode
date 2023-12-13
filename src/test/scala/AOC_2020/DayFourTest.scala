@@ -1,10 +1,11 @@
 package AOC_2020
 
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.{FlatSpec, Matchers}
 import shared.FileReader
 
-class DayFourTest extends FlatSpec with Matchers with FileReader with TableDrivenPropertyChecks {
+class DayFourTest extends AnyFlatSpec with Matchers with FileReader with TableDrivenPropertyChecks {
   val testInput = List[String](
     "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd",
     "byr:1937 iyr:2017 cid:147 hgt:183cm",

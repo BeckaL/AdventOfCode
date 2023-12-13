@@ -1,9 +1,11 @@
 package AOC_2018
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.prop.TableDrivenPropertyChecks
 import shared.FileReader
 
-class DayOne2018Test extends FlatSpec with Matchers with FileReader {
+class DayOne2018Test extends AnyFlatSpec with Matchers with FileReader {
   "Day One" should "do part one properly" in {
     val input = List(1721, 979, 366, 299, 675, 1456).map(_.toString)
     DayOne.partOne(input) shouldBe 3
