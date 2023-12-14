@@ -22,6 +22,8 @@ trait GridHelpers {
       x <- grid.head.indices
       y <- grid.indices
     } yield Coord(x, y)
+
+    def rotate90 = grid.transpose.map(_.reverse.mkString)
   }
 
   def getImmediateNeighbours(x: Int, y: Int, l: List[String]): List[Char] =
