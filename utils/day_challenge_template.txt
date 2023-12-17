@@ -14,7 +14,7 @@ object Day[[DAY]] extends DayChallenge[Int, Int]{
 
 object Day[[DAY]]Data extends TestData[Int, Int] {
   override val testData: List[String] = List(
-    """"""
+    ""
   )
   override val expectedPartOne: Option[Int] = Some(0)
   override val expectedPartTwo: Option[Int] = Some(0)
