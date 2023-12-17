@@ -53,6 +53,8 @@ object Coord extends Helpers {
   def from(xAndY: (Int, Int)) = {
     Coord(xAndY._1, xAndY._2)
   }
+  
+  def origin = Coord(0, 0)
 }
 
 

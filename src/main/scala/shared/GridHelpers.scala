@@ -24,6 +24,8 @@ trait GridHelpers {
     } yield Coord(x, y)
 
     def rotate90 = grid.transpose.map(_.reverse.mkString)
+    
+    def maxCoord = Coord(grid.head.length - 1, grid.length - 1)
   }
 
   def getImmediateNeighbours(x: Int, y: Int, l: List[String]): List[Char] =
