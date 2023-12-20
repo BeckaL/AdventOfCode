@@ -2,70 +2,62 @@ package AOC_2023
 
 import shared.{DayChallenge, Helpers, TestData}
 
+case class Part(x: Int, m: Int, a: Int, s: Int)
+trait MachineFlow
+case class Result(r: String) extends MachineFlow
+
+trait Comparison extends MachineFlow {
+  val partString: String;
+  val comparitor: Int;
+  val ifTrue: String
+}
+case class GreaterThanCondition(partString: String, comparitor: Int, ifTrue: String) extends Comparison
+case class LessThanCondition(partString: String, comparitor: Int, ifTrue: String) extends Comparison
+
 object DayNineteen extends DayChallenge[Int, Long] with Helpers {
   override def partOne(l: List[String]): Int =
+    val (parts, machines) = parsePartsAndMachine(l)
+    val validRanges = processFlow(machines("in"), Map(), machines, List())
+    val validParts = parts.filter(p => validRanges.exists(r =>
+      r.get("s").forall(_.contains(p.s)) &&
+        r.get("x").forall(_.contains(p.x)) &&
+        r.get("a").forall(_.contains(p.a)) &&
+        r.get("m").forall(_.contains(p.m))))
+    validParts.map(part => part.x + part.m + part.a + part.s).sum
+
+  override def partTwo(l: List[String]): Long =
+    val (_, machines) = parsePartsAndMachine(l)
+    processFlow(machines("in"), Map(), machines, List()).map(calculatePossibilitiesInRanges).sum
+
+  private def calculatePossibilitiesInRanges(ranges: Map[String, Range]): Long =
+    val getRangeSizeForKey = (s: String) => ranges.get(s).map(range => range.size).getOrElse(4000).toLong
+    getRangeSizeForKey("s") * getRangeSizeForKey("x") * getRangeSizeForKey("m") * getRangeSizeForKey("a")
+
+  private def splitRange(r: Range, c: Comparison) = c match
+    case _: GreaterThanCondition =>
+      val (r1, r2) = r.splitAt(c.comparitor + 1 - r.start)
+      (r2, r1)
+    case _: LessThanCondition => r.splitAt(c.comparitor - r.start)
+
+  private def processFlow(flow: List[MachineFlow], ranges: Map[String, Range], machine: Map[String, List[MachineFlow]], found: List[Map[String, Range]]): List[Map[String, Range]] =
+    flow.head match
+      case Result(str) if str == "A" => ranges +: found
+      case Result(str) if str == "R" => found
+      case Result(machinePartString) => processFlow(machine(machinePartString), ranges, machine, found)
+      case c: Comparison =>
+        val (trueRange, falseRange) = splitRange(ranges.getOrElse(c.partString, Range(1, 4001)), c)
+        val ifTrueResult = c.ifTrue match
+          case "A" => ranges.updated(c.partString, trueRange) +: found
+          case "R" => found
+          case nextPart => processFlow(machine(nextPart), ranges.updated(c.partString, trueRange), machine, found)
+        ifTrueResult ++ processFlow(flow.tail, ranges.updated(c.partString, falseRange), machine, List())
+
+  private def parsePartsAndMachine(l: List[String]) =
     val split = splitIntoGroupsOfList(l)
-    val parts = parseParts(split(1))
-    val machines = split.head.map(parseMachine).toMap
-    parts.filter(p => putPartThroughMachines(machines, p, "in")).map(part => part.x + part.m + part.a + part.s).sum
+    val parts = split(1).map(extractInts).map(ints => Part(x = ints.head, m = ints(1), a = ints(2), s = ints(3)))
+    (parts, split.head.map(parseMachine).toMap)
 
-  private def putPartThroughMachines(machines: Map[String, List[MachineFLow]], part: Part, current: String): Boolean =
-    putPartThroughMachine(machines(current), part) match
-      case "A" => true
-      case "R" => false
-      case differentMachine => putPartThroughMachines(machines, part, differentMachine)
-
-  private def putPartThroughMachine(flows: List[MachineFLow], part: Part): String =
-    flows.head match
-      case Result(r) => r
-      case Condition(f, ifTrue) => if (f(part)) ifTrue else putPartThroughMachine(flows.tail, part)
-
-  case class Part(x: Int, m: Int, a: Int, s: Int)
-
-  trait MachineFLow
-
-  case class Condition(f: Part => Boolean, ifTrue: String) extends MachineFLow
-
-  case class Result(r: String) extends MachineFLow
-
-
-  trait MachineFLow2
-
-  trait Comparison extends MachineFLow2 {
-    val partString: String;
-    val comparitor: Int;
-    val ifTrue: String
-  }
-
-  case class GreaterThanCondition(partString: String, comparitor: Int, ifTrue: String) extends Comparison
-
-  case class LessThanCondition(partString: String, comparitor: Int, ifTrue: String) extends Comparison
-
-  case class Result2(r: String) extends MachineFLow2
-
-  private def parseParts(parts: List[String]) =
-    parts.map(extractInts).map(ints => Part(x = ints.head, m = ints(1), a = ints(2), s = ints(3)))
-
-  def getPart(s: String)(p: Part) = Map("x" -> p.x, "m" -> p.m, "a" -> p.a, "s" -> p.s)(s)
-
-  private def parseMachine(s: String): (String, List[MachineFLow]) =
-    val split = s.split("\\{")
-    val flows = split(1).replaceAll("(\\{|\\})", "").split(",").map { conditionString =>
-      if (conditionString.contains(":"))
-        val (condition, result) = conditionString.splitAt(conditionString.indexOf(":"))
-        val valueToCompare = extractInts(condition).head
-        if (condition.contains("<"))
-          val partFunction = getPart(condition.split("<").head)
-          Condition((part: Part) => partFunction(part) < valueToCompare, result.tail)
-        else
-          val partFunction = getPart(condition.split(">").head)
-          Condition((part: Part) => partFunction(part) > valueToCompare, result.tail)
-      else
-        Result(conditionString)
-    }
-    split.head -> flows.toList
-
-  private def parseMachine2(s: String): (String, List[MachineFLow2]) =
+  private def parseMachine(s: String): (String, List[MachineFlow]) =
     val split = s.split("\\{")
     val flows = split(1).replaceAll("(\\{|\\})", "").split(",").map { conditionString =>
       if (conditionString.contains(":"))
@@ -76,39 +68,9 @@ object DayNineteen extends DayChallenge[Int, Long] with Helpers {
         else
           GreaterThanCondition(condition.split(">").head, valueToCompare, result.tail)
       else
-        Result2(conditionString)
+        Result(conditionString)
     }
     split.head -> flows.toList
-
-  private def calculatePossibilitiesInRanges(ranges: Map[String, Range]): Long =
-    val getRangeSizeForKey = (s: String) => ranges.get(s).map(range => range.size).getOrElse(4000).toLong
-    getRangeSizeForKey("s") * getRangeSizeForKey("x") * getRangeSizeForKey("m") * getRangeSizeForKey("a")
-
-  private def splitRange(r: Range, c: Comparison) =
-    c match
-      case _: GreaterThanCondition =>
-        val (r1, r2) = r.splitAt(c.comparitor + 1 - r.start)
-        (r2, r1)
-      case _: LessThanCondition => r.splitAt(c.comparitor - r.start)
-
-  private def processFlow(flow: List[MachineFLow2], ranges: Map[String, Range], machine: Map[String, List[MachineFLow2]]): Long =
-    flow.head match
-      case Result2(str) if str == "A" => calculatePossibilitiesInRanges(ranges)
-      case Result2(str) if str == "R" => 0
-      case Result2(machinePartString) => processFlow(machine(machinePartString), ranges, machine)
-      case c: Comparison =>
-        val (trueRange, falseRange) = splitRange(ranges.getOrElse(c.partString, Range(1, 4001)), c)
-        val ifTrueResult = c.ifTrue match
-          case "A" => calculatePossibilitiesInRanges(ranges.updated(c.partString, trueRange))
-          case "R" => 0
-          case nextPart => processFlow(machine(nextPart), ranges.updated(c.partString, trueRange), machine)
-        ifTrueResult + processFlow(flow.tail, ranges.updated(c.partString, falseRange), machine)
-
-  override def partTwo(l: List[String]): Long =
-    val split = splitIntoGroupsOfList(l)
-    val parts = parseParts(split(1))
-    val machines = split.head.map(parseMachine2).toMap
-    processFlow(machines("in"), Map(), machines)
 }
 
 object DayNineteenData extends TestData[Int, Long] {
