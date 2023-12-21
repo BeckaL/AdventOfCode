@@ -30,6 +30,8 @@ case class Coord(x: Int, y: Int) {
   def neighbours: Set[Coord] =
     List((-1, -1), (1, -1), (1, 1), (-1, 1), (-1, 0), (0, -1), (0, 1), (1, 0)).map { case (xD, yD) => Coord(x + xD, y + yD) }.toSet
 
+  def neighboursWithoutDiagonals: Set[Coord] =
+    List((-1, 0), (0, -1), (0, 1), (1, 0)).map { case (xD, yD) => Coord(x + xD, y + yD) }.toSet
   def taxicabDistanceFromOrigin: Int = x.abs + y.abs
   
   def manhattanDistanceFrom(c2: Coord): Int = (x - c2.x).abs + (y - c2.y).abs
