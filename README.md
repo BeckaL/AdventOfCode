@@ -7,9 +7,9 @@ Repo is in a bit of a hodgepodge state.
 To run a day, use run [day] [year] [part]
 
 e.g.
-`sbt run 1 2022 23`
+`sbt run 7 2022 1`
 
-to run part 1 of day 23 2022.
+to run part 1 of day 7 2022. The part is optional - omitting it will run both parts.
 
 
 If test data is provided, it will first test the part against the test
