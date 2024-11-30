@@ -2,6 +2,7 @@ import sys
 import os
 from datetime import date
 from urllib.request import Request, urlopen
+import fileinput
 
 # usage: python3 ./make_day.py 2022 3
 
@@ -45,6 +46,18 @@ def make_day(year, day):
             input_file.write(content)
         else:
             print(f"either input file {input_path} is already populated or date is in the future")
+
+
+    print("uncommenting line in controller")
+    file_path = f"./src/main/scala/AOC_{year}/Controller{year}.scala"
+    substring = f"case \"{day}\""
+
+    with fileinput.FileInput(file_path, inplace=True) as file:
+        for line in file:
+            if substring in line and "//" in line:
+                print(line.replace("//", "", 1), end='')  # Remove the first occurrence of "//"
+            else:
+                print(line, end='')
 
 
 if __name__ == "__main__":

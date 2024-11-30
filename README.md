@@ -39,7 +39,5 @@ e.g.
 If you have a working session cookie (see section above) and that day has been released on the website, this will also fetch input data
 for that day. If you have created the day file in advance, you can re-run this script just to retrieve the input data.
 
-Uncomment the day from the year controller.
-
 When reading through the instructions for the day, identify the test case. Copy this and the test answer into test data. For part two, do the
 same - if the input data is the same, no changes required, if it's different you can set the testData2 val.
