@@ -19,6 +19,7 @@ object DayTwentyThree extends DayChallenge[Int, Int] {
           case "sub" :: x :: y :: Nil => go(i + 1, registers.sub(x, y), mulCalled)
           case "mul" :: x :: y :: Nil => go(i + 1, registers.mul(x, y), mulCalled + 1)
           case "jnz" :: x :: y :: Nil => go(i + registers.newOffset(x, y), registers, mulCalled)
+          case _ => throw new RuntimeException("No match")
         }
 
     go(0, Map("a" -> 0, "b" -> 0, "c" -> 0, "d" -> 0, "e" -> 0, "f" -> 0, "g" -> 0, "h" -> 0), 0)

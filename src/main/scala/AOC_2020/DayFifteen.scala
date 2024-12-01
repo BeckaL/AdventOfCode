@@ -20,7 +20,8 @@ object DayFifteen extends DayChallenge[Long, Long] {
       } else {
         said(lastSaid) match {
           case _ :: Nil => 0L
-          case head :: tail => (head - tail.head).toLong
+          case head :: tail => (head - tail.head)
+          case _ => throw new RuntimeException("I didn't understand that")
         }
       }
       go(appendOrAdd(newI, goNumber, said), newI, goNumber + 1)

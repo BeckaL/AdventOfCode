@@ -13,6 +13,7 @@ object DayTen extends DayChallenge[Int, String] with Helpers {
           val newCurrentX = currentX + i
           val scoreAfterSecondTick = updateScoreAtTimes(updatedScore, currentTime + 1, currentX)
           (newCurrentX, scoreAfterSecondTick, currentTime + 2)
+        case _ => throw new RuntimeException("No match")
       }
     }._2
   }
@@ -24,6 +25,7 @@ object DayTen extends DayChallenge[Int, String] with Helpers {
       extractIntsWithOptionalSigns(line) match {
         case Nil => (sprite, updatedPixels, time + 1)
         case i :: Nil => (sprite + i, pixelsDuringTick(time + 1, sprite, updatedPixels), time + 2)
+        case _ => throw new RuntimeException("No match")
       }
     }._2.mkString("").sliding(40, 40).mkString("\n")
     "\n" + resultString

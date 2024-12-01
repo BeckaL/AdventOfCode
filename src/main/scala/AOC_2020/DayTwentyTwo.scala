@@ -4,7 +4,7 @@ import shared.{DayChallenge, Helpers}
 
 import scala.annotation.tailrec
 
-object DayTwentyTwo extends DayChallenge[Long, Long] with Helpers{
+object DayTwentyTwo extends DayChallenge[Long, Long] with Helpers {
 
   case class GameState(p1: List[Int], p2: List[Int]) {
     def playerOneWins = GameState(p1.tail :+ p1.head :+ p2.head, p2.tail)
@@ -22,12 +22,12 @@ object DayTwentyTwo extends DayChallenge[Long, Long] with Helpers{
         case _ => play(resolveRound(s))
       }
 
-    play(GameState(p1Cards, p2Cards)).reverse.zipWithIndex.map{case(card, index) => card * (index + 1)}.sum
+    play(GameState(p1Cards, p2Cards)).reverse.zipWithIndex.map { case (card, index) => card * (index + 1) }.sum
   }
 
   private def resolveRound(s: GameState) =
     (s.p1.head, s.p2.head) match {
-      case (p1Card, p2Card) if (p1Card > p2Card) =>  s.playerOneWins
+      case (p1Card, p2Card) if (p1Card > p2Card) => s.playerOneWins
       case (p1Card, p2Card) => GameState(s.p1.tail, s.p2.tail :+ p2Card :+ p1Card)
     }
 
@@ -36,7 +36,7 @@ object DayTwentyTwo extends DayChallenge[Long, Long] with Helpers{
     (player1.split("\n").tail.map(_.toInt).toList, player2.split("\n").tail.map(_.toInt).toList)
   }
 
- def recursePlay(s: GameState, previousStates: List[GameState], game: Int): (List[Int], List[Int]) = {
+  def recursePlay(s: GameState, previousStates: List[GameState], game: Int): (List[Int], List[Int]) = {
     if (previousStates contains (s)) {
       (s.p1, List())
     } else {
@@ -65,25 +65,25 @@ object DayTwentyTwo extends DayChallenge[Long, Long] with Helpers{
   override def partTwo(l: List[String]): Long = {
     val (p1Cards, p2Cards) = getP1AndP2Cards(l)
     val endState = recursePlay(GameState(p1Cards, p2Cards), List(), 0)
-    (endState._1 ++ endState._2).reverse.zipWithIndex.map{case(card, index) => card * (index + 1)}.sum
+    (endState._1 ++ endState._2).reverse.zipWithIndex.map { case (card, index) => card * (index + 1) }.sum
   }
 
 
   override val expectedPartOne: Option[Long] = Some(306)
   override val expectedPartTwo: Option[Long] = Some(291)
   override val testData: List[String] = List(
-      "Player 1:",
-      "9",
-      "2",
-      "6",
-      "3",
-      "1",
-      "",
-      "Player 2:",
-      "5",
-      "8",
-      "4",
-      "7",
-      "10")
+    "Player 1:",
+    "9",
+    "2",
+    "6",
+    "3",
+    "1",
+    "",
+    "Player 2:",
+    "5",
+    "8",
+    "4",
+    "7",
+    "10")
 
 }

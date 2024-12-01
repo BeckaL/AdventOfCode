@@ -35,6 +35,7 @@ object DaySeven extends DayChallenge[Int, Int] {
           case fileSize :: _ :: Nil =>
             val currentDir = m(currentDirName)
             (currentDirName, m.updated(currentDirName, currentDir.updateFiles(fileSize.toInt)))
+          case _ => throw new RuntimeException("No match")
         }
     }._2
 

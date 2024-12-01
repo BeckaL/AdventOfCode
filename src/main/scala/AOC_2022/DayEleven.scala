@@ -39,6 +39,7 @@ object DayEleven extends DayChallenge[Long, Long] with Helpers {
         case "*" :: i :: Nil     => (x: Long) => x * i.toLong
         case "+" :: "old" :: Nil => (x: Long) => x + x
         case "+" :: i :: Nil     => (x: Long) => x + i.toLong
+        case _ => throw new RuntimeException("No match")
       }
       index -> Monkey(index, items, operation, firstIFrom(3), firstIFrom(4), firstIFrom(5), 0)
     }.toMap

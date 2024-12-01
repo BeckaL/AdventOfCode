@@ -16,8 +16,8 @@ object DayTwenty extends DayChallenge[Long, Int] {
   }
 
   private def getAllRows(firstTile: Tile, all: List[Tile], unplaced: List[Tile]) = {
-      val firstRow = fillRowFrom(firstTile, getUnplaced(List(firstTile), unplaced))
-      val edgeOfLastRow = firstRow.head
+    val firstRow = fillRowFrom(firstTile, getUnplaced(List(firstTile), unplaced))
+    val edgeOfLastRow = firstRow.head
     val fillDirection = if (hasSideMatching(Top, edgeOfLastRow, unplaced)) {
       Top
     } else if (hasSideMatching(Bottom, edgeOfLastRow, unplaced)) {
@@ -25,7 +25,8 @@ object DayTwenty extends DayChallenge[Long, Int] {
     } else {
       throw new RuntimeException(s"wanted to get a tile to the top or bottom of ${edgeOfLastRow.id} but didn't find any")
     }
-    def go(lastPlaced: Tile, fillDirection: Side, currentRows: List[List[Tile]]): List[List[Tile]] =  {
+
+    def go(lastPlaced: Tile, fillDirection: Side, currentRows: List[List[Tile]]): List[List[Tile]] = {
       val unplaced = all.filterNot(t => currentRows.flatten.map(_.id).contains(t.id))
       if (unplaced.isEmpty) {
         currentRows
@@ -48,6 +49,7 @@ object DayTwenty extends DayChallenge[Long, Int] {
         go(newRow.last, fillDirection, newRows)
       }
     }
+
     go(edgeOfLastRow, fillDirection, List(firstRow))
   }
 
@@ -62,6 +64,7 @@ object DayTwenty extends DayChallenge[Long, Int] {
     } else {
       throw new RuntimeException(s"wanted to get a tile to the side of ${rowStart} but didn't find any")
     }
+
     def go(justPlaced: Tile, unplacedTiles: List[Tile], currentRow: List[Tile]): List[Tile] = {
       val candidates = unplacedTiles.filter(t2 => t2 != justPlaced && hasOneSideMatching(justPlaced, t2))
       val nextTile = candidates.find(hasSideMatching(fillDirection, justPlaced, _))
@@ -73,15 +76,16 @@ object DayTwenty extends DayChallenge[Long, Int] {
             case Right => currentRow :+ rotatedTile
           }
           go(rotatedTile, getUnplaced(List(rotatedTile), unplacedTiles), newRow)
-        case None =>  val finalRow = currentRow
+        case None => val finalRow = currentRow
           finalRow
       }
     }
+
     go(rowStart, getUnplaced(List(rowStart), unplacedTiles), List(rowStart))
   }
 
   private def printRow(tiles: List[List[String]]): String = {
-    tiles.head.head.indices.map{i => tiles.map(t => "|" + t(i) + "|").mkString("  ")}.mkString("\n")
+    tiles.head.head.indices.map { i => tiles.map(t => "|" + t(i) + "|").mkString("  ") }.mkString("\n")
   }
 
   private def getCorners(tiles: List[Tile]): List[Tile] =
@@ -105,6 +109,7 @@ object DayTwenty extends DayChallenge[Long, Int] {
   private def rotateUntilMatches(placedTile: Tile, side: Side, tileFlippedCorrectly: Tile): Tile = {
     val sideToMatchOnTile2 = side.opposite
     val stringToMatch = side.get(placedTile)
+
     def go(t2: Tile, i: Int): Tile = {
       if (i > 4) {
         throw new RuntimeException(s"Tried to rotate tile \n${tileFlippedCorrectly.rows.mkString("\n")}\n\n to match \n${placedTile.rows.mkString("\n")}\n\n side $side ${side.get(placedTile)} but didn't work")
@@ -123,8 +128,9 @@ object DayTwenty extends DayChallenge[Long, Int] {
         }
       }
     }
+
     go(tileFlippedCorrectly, 0)
-    }
+  }
 
   private def getTiles(l: List[String]): List[Tile] =
     l.mkString("\n").split("\n\n").map { line =>
@@ -135,6 +141,7 @@ object DayTwenty extends DayChallenge[Long, Int] {
 
   case class Tile(id: Int, rows: List[String]) {
     def asString: String = rows.mkString("\n")
+
     val withoutBorder = rows.tail.dropRight(1).map(_.tail.dropRight(1))
 
     val top = rows.head
@@ -145,6 +152,7 @@ object DayTwenty extends DayChallenge[Long, Int] {
     def rotated90 = Tile(id, rows.indices.map(i => rows.map(r => r(i)).reverse.mkString).toList)
 
     def flippedHorizontally = Tile(id, rows.map(_.reverse))
+
     def flippedVertically = Tile(id, rows.reverse)
 
     def flippedSides = sides.map(s => s.reverse)
@@ -158,7 +166,7 @@ object DayTwenty extends DayChallenge[Long, Int] {
   override def partTwo(l: List[String]): Int = {
     val grid = getGrid(l)
     println("String is ")
-    val gridAsStringWithoutBorders = grid.map{row =>
+    val gridAsStringWithoutBorders = grid.map { row =>
       row.head.withoutBorder.indices.map(i => row.map(tile => tile.withoutBorder(i)).mkString("")).mkString("\n")
     }.mkString("\n")
     countAllSeaMonsterVariations(gridAsStringWithoutBorders)
@@ -179,12 +187,13 @@ object DayTwenty extends DayChallenge[Long, Int] {
     val flipped270 = rotate(flipped180)
     val all = List(split, rotated90, rotated180, rotated270, flipped, flipped90, flipped180, flipped270)
     val allCounts: Map[List[String], List[Coord]] = all.map(image => image -> getCoordsOfSeaMonsters(image, seaMonster)).toMap
-    val (correctImage, coords) = allCounts.find{case(image, coords) => coords.size > 0}.get
+    val (correctImage, coords) = allCounts.find { case (image, coords) => coords.size > 0 }.get
     val allHashes = correctImage.flatten.count(_ == '#')
     allHashes - (coords.size * seaMonster.flatten.count(_ == '#'))
   }
 
-  def rotate(l: List[String]) =  l.indices.map(i => l.map(r => r(i)).reverse.mkString).toList
+  def rotate(l: List[String]) = l.indices.map(i => l.map(r => r(i)).reverse.mkString).toList
+
   def flip(l: List[String]) = l.reverse
 
   private def getCoordsOfSeaMonsters(splitImage: List[String], seaMonster: List[String]): List[Coord] = {
@@ -217,35 +226,39 @@ object DayTwenty extends DayChallenge[Long, Int] {
   private def getCoords(strings: List[String], coordsToGet: List[Coord]): List[Char] = coordsToGet.map(c => strings(c.y)(c.x))
 
   def getSeaMonsterCoordinates(monster: List[String]): List[Coord] =
-    monster.zipWithIndex.flatMap{case(row, yIndex) =>
-      row.zipWithIndex.collect{case(char, xIndex) if char == '#' => Coord(xIndex, yIndex)}
+    monster.zipWithIndex.flatMap { case (row, yIndex) =>
+      row.zipWithIndex.collect { case (char, xIndex) if char == '#' => Coord(xIndex, yIndex) }
     }
 
   trait Side {
     def get(tile: Tile): String
+
     val opposite: Side
   }
 
   case object Top extends Side {
     def get(tile: Tile) = tile.top
+
     override val opposite: Side = Bottom
   }
 
   case object Bottom extends Side {
     def get(tile: Tile) = tile.bottom
+
     override val opposite: Side = Top
   }
 
   case object Left extends Side {
     def get(tile: Tile) = tile.left
+
     override val opposite: Side = Right
   }
 
   case object Right extends Side {
     def get(tile: Tile) = tile.right
+
     override val opposite: Side = Left
   }
-
 
 
   override val expectedPartOne: Option[Long] = Some("20899048083289".toLong)

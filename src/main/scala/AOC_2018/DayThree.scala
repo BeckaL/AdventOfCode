@@ -30,8 +30,8 @@ object DayThree extends DayChallenge[Int, Int] {
   case class ClaimWithRectangle(id: Int, rect: Rectangle)
 
   object ClaimWithRectangle {
-    def from(str: String): ClaimWithRectangle = str.split("@").toList match {
-      case List(claim, rectangle: String) => rectangle.trim.split(":").map(_.trim).toList match {
+    def from(str: String): ClaimWithRectangle = str.split("@").toList match
+      case List(claim, rectangle: String) => rectangle.trim.split(":").map(_.trim).toList match
         case List(margins, size: String) =>
           val splitMargins = margins.split(",")
           val splitSize = size.split("x")
@@ -39,8 +39,7 @@ object DayThree extends DayChallenge[Int, Int] {
           val claimInt: Int = claim.trim.replace("#", "").toInt
           ClaimWithRectangle(claimInt, rectangle)
         case _ => throw new RuntimeException("I didn't understand that")
-      }
-    }
+      case _ => throw new RuntimeException("I didn't understand that")
   }
 
     object Rectangle {

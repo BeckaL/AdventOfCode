@@ -1,6 +1,8 @@
 package AOC_2023
 
-import shared.{DayChallenge, Helpers, TestData, Coord}
+import shared.{Coord, DayChallenge, Helpers, TestData}
+
+import scala.annotation.tailrec
 
 object DayEleven extends DayChallenge[Long, Long] with Helpers {
   override def partOne(l: List[String]): Long =
@@ -15,12 +17,15 @@ object DayEleven extends DayChallenge[Long, Long] with Helpers {
   private def emptyColumnNumbers(l: List[String]) =
     l.head.indices.filter(x => l.map(_(x)).mkString("").forall(_ == '.')).toList
 
+  @tailrec
   private def findAllPaths(remainingStars: List[Coord], emptyYIndices: List[Int], emptyXIndices: List[Int], multiplier: Long, currentPaths: List[Long] = List()): List[Long] =
     remainingStars match
       case lastStar :: Nil => currentPaths
       case nextStar :: otherStars =>
         val newPaths = otherStars.map(distanceFrom(_, nextStar, emptyYIndices, emptyXIndices, multiplier))
         findAllPaths(otherStars, emptyYIndices, emptyXIndices, multiplier, currentPaths ++ newPaths)
+      case _ => throw new RuntimeException("No match")
+
 
   private def distanceFrom(c1: Coord, c2: Coord, emptyYIndices: List[Int], emptyXIndices: List[Int], multiplier: Long): Long =
     c1.manhattanDistanceFrom(c2) +

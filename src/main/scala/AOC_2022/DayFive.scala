@@ -6,18 +6,18 @@ object DayFive extends DayChallenge[String, String] with Helpers {
   type Stacks = Map[Int, List[Char]]
 
   override def partOne(l: List[String]): String = {
-    val stacks :: moves :: _ = splitIntoGroupsOfList(l)
+    val stacks :: moves :: _ = splitIntoGroupsOfList(l) : @unchecked
     getTopsOFEndStacks(parseStacks(stacks), moves, move)
   }
 
   override def partTwo(l: List[String]): String = {
-    val stacks :: moves :: _ = splitIntoGroupsOfList(l)
+    val stacks :: moves :: _ = splitIntoGroupsOfList(l) : @unchecked
     getTopsOFEndStacks(parseStacks(stacks), moves, moveTwo)
   }
 
   private def getTopsOFEndStacks(stacks: Stacks, moves: List[String], transformF: (Int, Int, Int, Stacks) => Stacks): String = {
     val endStacks = moves.foldLeft(stacks){case (currentStacks, instruction) =>
-      val moveN :: from :: to :: _ = extractInts(instruction)
+      val moveN :: from :: to :: _ = extractInts(instruction) : @unchecked
       transformF(moveN, from, to, currentStacks)
     }
     endStacks.toList.sortBy{case (i, _) => i}.map(_._2.headOption.getOrElse(" ")).mkString("")

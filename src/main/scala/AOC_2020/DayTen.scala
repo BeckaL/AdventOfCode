@@ -102,7 +102,7 @@ object DayTen extends DayChallenge[Int, Long] {
   }
 
   def getTotalArrangements(joltages: List[Int], cur: Int, mv:Int): Long = {
-    val threeGaps = joltages.sorted.sliding(2).filter({case List(a, b) => b-a == 3}).map(_.last).toList :+ (mv+3)
+    val threeGaps = joltages.sorted.sliding(2).collect{case List(a, b) if b - a == 3 => (a, b)}.map(_.last).toList :+ (mv+3)
     threeGaps.foldLeft((0, 1:Long))({case ((prev, acc), v) => {
       (v, acc * getTotRec(joltages, prev, v-3))
     }

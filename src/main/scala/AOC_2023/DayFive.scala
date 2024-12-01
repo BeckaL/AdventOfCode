@@ -23,7 +23,7 @@ object DayFive extends DayChallenge[Long, Long] with Helpers{
     val (seedsLines, otherLines) = l.splitAt(2)
     val transformations = splitIntoGroupsOfList(otherLines).map(_.tail.map({transformationGroup =>
         val numbers = extractLongs(transformationGroup)
-      ConversionMap(numbers.head, numbers(1), numbers(2))
+        ConversionMap(numbers.head, numbers(1), numbers(2))
     }).toList)
     (extractLongs(seedsLines.head), transformations)
 
