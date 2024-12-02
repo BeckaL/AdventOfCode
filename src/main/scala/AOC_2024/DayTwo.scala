@@ -10,16 +10,16 @@ object DayTwo extends DayChallenge[Int, Int]{
     diffs.forall(i => i <= -1 && i >= -3) || diffs.forall(i => i >= 1 && i <= 3)
 
   override def partTwo(l: List[String]): Int = {
-    l.map(getDiffs).count(isSafePartTwo)
+    l.map(getDiffs).count(isSafeRemovingLevel)
   }
-
-  private def isSafePartTwo(diffs: List[Int]): Boolean =
-    isSafe(diffs) || true
 
   private def getDiffs(line: String): List[Int] =
     line.split(" ").map(_.toInt).sliding(2).map(_.toList).map { case List(a, b) => b - a }.toList
 
   private def isSafeRemovingLevel(diffs: List[Int]): Boolean =
+    if (isSafe(diffs)) {
+      return true
+    }
     val outliersWithIndices = diffs.zipWithIndex.filter{ case (diff, _) => diff == 0 || diff < -3 || diff > 3}
     if (outliersWithIndices.size == 1) {
       val (index, value) = outliersWithIndices.head
