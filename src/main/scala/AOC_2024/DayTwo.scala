@@ -1,48 +1,22 @@
 package AOC_2024
 
+import shared.Coord.extractInts
+import shared.UpdaterHelpers.removeAtIndex
 import shared.{DayChallenge, TestData}
 
-object DayTwo extends DayChallenge[Int, Int]{
+object DayTwo extends DayChallenge[Int, Int] {
   override def partOne(l: List[String]): Int =
-    l.map(getDiffs).count(isSafe)
+    l.map(extractInts).count(isSafe)
 
-  private def isSafe(diffs: List[Int]): Boolean =
+  override def partTwo(l: List[String]): Int =
+    l.map(extractInts).count(line => isSafe(line) || isSafeRemovingLevel(line))
+
+  private def isSafe(levels: List[Int]): Boolean =
+    val diffs = levels.sliding(2).collect { case List(a, b) => b - a }.toList
     diffs.forall(i => i <= -1 && i >= -3) || diffs.forall(i => i >= 1 && i <= 3)
 
-  override def partTwo(l: List[String]): Int = {
-    l.map(getDiffs).count(isSafeRemovingLevel)
-  }
-
-  private def getDiffs(line: String): List[Int] =
-    line.split(" ").map(_.toInt).sliding(2).map(_.toList).map { case List(a, b) => b - a }.toList
-
-  private def isSafeRemovingLevel(diffs: List[Int]): Boolean =
-    if (isSafe(diffs)) {
-      return true
-    }
-    val outliersWithIndices = diffs.zipWithIndex.filter{ case (diff, _) => diff == 0 || diff < -3 || diff > 3}
-    if (outliersWithIndices.size == 1) {
-      val (index, value) = outliersWithIndices.head
-      if (index == diffs.indices.max) {
-        true
-      } else {
-        val newValue = value + diffs(index + 1)
-        val newList = diffs.take(index) ++ (newValue +: diffs.slice(index + 1, diffs.size).tail)
-        isSafe(newList)
-      }
-    } else if (outliersWithIndices.size == 2) {
-      val indices = outliersWithIndices.map(_._2)
-      val oneApart = indices.head - indices(1) == 1
-      if (oneApart) {
-        val newValue = outliersWithIndices.map(_._1).sum
-        val newList = diffs.take(outliersWithIndices.head._1) ++ (newValue +: diffs.slice(outliersWithIndices(1)._1, diffs.size).tail)
-        isSafe(newList)
-      } else {
-        false
-      }
-    } else {
-      false
-    }
+  private def isSafeRemovingLevel(ints: List[Int]): Boolean =
+    ints.indices.exists(i => isSafe(removeAtIndex(ints, i)))
 }
 
 object DayTwoData extends TestData[Int, Int] {

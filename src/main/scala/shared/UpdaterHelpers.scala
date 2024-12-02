@@ -15,4 +15,12 @@ object UpdaterHelpers {
       (before :+ updatedStr) ++ after.tail
     }
   }
+
+  def removeAtIndex[A](list: List[A], index: Int): List[A] =
+    val (before, after) = list.splitAt(index)
+    before ++ after.tail
+    
+  def updateAtIndex[A](i: Int, replacement: A, list: List[A]): List[A] =
+    val (before, after) = list.splitAt(i)
+    (before :+ replacement) ++ after.tail
 }
