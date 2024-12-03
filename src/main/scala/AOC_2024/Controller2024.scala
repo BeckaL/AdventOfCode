@@ -13,7 +13,7 @@ object Controller2024 extends YearController {
     day match {
       case "1" => (DayOne, DayOneData)
       case "2" => (DayTwo, DayTwoData)
-//      case "3" => (DayThree, DayThreeData)
+      case "3" => (DayThree, DayThreeData)
 //      case "4" => (DayFour, DayFourData)
 //      case "5" => (DayFive, DayFiveData)
 //      case "6" => (DaySix, DaySixData)
