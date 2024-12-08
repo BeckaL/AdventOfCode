@@ -2,3 +2,5 @@
 target/
 project/
 /**/Day*Input.txt
+.bsp
+.idea
