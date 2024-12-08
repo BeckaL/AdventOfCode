@@ -2,35 +2,33 @@ package AOC_2024
 
 import shared.{DayChallenge, Helpers, TestData}
 
-import scala.annotation.tailrec
-
 object DayFive extends DayChallenge[Int, Int] with Helpers {
   override def partOne(l: List[String]): Int =
-    val (rulesLines, pagesLines) = l.splitAt(l.indexOf(""))
-    val pagesLists = pagesLines.tail.map(_.split(",").map(_.toInt).toList)
-    val rules = parseRules(rulesLines)
-    pagesLists.filter(isValidPage(_, rules)).map(l => l(l.size / 2)).sum
+    getPagesAndSortedPages(l).collect{ case (page, sorted) if page == sorted => page }
+      .map(l => l(l.size / 2)).sum
 
   override def partTwo(l: List[String]): Int =
-    2
+    getPagesAndSortedPages(l).collect { case (page, sorted) if page != sorted => sorted }
+      .map(l => l(l.size / 2)).sum
 
-  private def isValidPage(pages: List[Int], rules: Map[Int, Set[Int]]): Boolean =
-    @tailrec
-    def go(soFar: Set[Int], remaining: List[Int]): Boolean =
-      remaining match
-        case Nil => true
-        case firstInt :: others =>
-          val maybeRule = rules.get(firstInt)
-          maybeRule match
-            case Some(cantBePrecededBy) if cantBePrecededBy.intersect(soFar).nonEmpty => false
-            case _ => go(soFar + firstInt, others)
-    go(Set(), pages)
+  private def getPagesAndSortedPages(l: List[String]): List[(List[Int], List[Int])] =
+    val (rulesLines, pagesLines) = l.splitAt(l.indexOf(""))
+    val pagesLists = pagesLines.tail.map(_.split(",").map(_.toInt).toList)
+    val ordering = myOrdering(parseRules(rulesLines))
+    pagesLists.map(page => (page, page.sorted(ordering)))
 
   private def parseRules(l: List[String]) =
     l.map { s =>
       val split = s.split("\\|")
       (split(0).toInt, split(1).toInt)
     }.groupMap(_._1)(_._2).map { case (i, mapsTo) => (i, mapsTo.toSet) }
+
+  def myOrdering(m: Map[Int, Set[Int]]):  Ordering[Int] =
+    (a: Int, b: Int) =>
+      (m.get(b), m.get(a)) match
+        case (Some(greaterThanBs), _) if greaterThanBs.contains(a) => 1
+        case (_, Some(greaterThanAs)) if greaterThanAs.contains(b) => -1
+        case _ => 0
 }
 
 object DayFiveData extends TestData[Int, Int] {
