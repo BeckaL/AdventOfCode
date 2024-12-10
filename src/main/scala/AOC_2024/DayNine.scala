@@ -8,20 +8,19 @@ object DayNine extends DayChallenge[Long, Int]{
   case class MemoryChunk(size: Int, position: Int)
 
   override def partOne(l: List[String]): Long = {
-    val firstMemoryChunk :: memoryChunks = parseMemoryChunks(l.head)
+    val memoryChunks = parseMemoryChunks(l.head)
     val spaces = parseSpaces(l.head)
-    val initialScore = score(List((firstMemoryChunk.size, firstMemoryChunk.position)))
-    defrag(memoryChunks, spaces, initialScore, firstMemoryChunk.size)
+    defrag(memoryChunks.tail, spaces, 0, memoryChunks.head.size)
   }
 
-  private def score(result: Seq[(Int, Int)]): Long =
-    result.map{case (initialPosition, positionNow) => initialPosition * positionNow.toLong}.sum
+  private def score(position: Int, startPosition: Int, length: Int) =
+    (0 until length).map(offset => position * (startPosition + offset).toLong).sum
 
   private def defrag(chunks: List[MemoryChunk], spaces: List[Int], soFar: Long, indexInFile: Int): Long =
     if (chunks.isEmpty) {
       soFar
     } else if (chunks.size == 1) {
-      soFar + score((0 until chunks.head.size).map(offset => (chunks.head.position, indexInFile + offset)))
+      soFar + score(chunks.head.position, indexInFile, chunks.head.size)
     } else {
       val toMove = chunks.last
       val (newSoFar, newChunks, newSpaces, newIndexInFile) =
@@ -32,48 +31,42 @@ object DayNine extends DayChallenge[Long, Int]{
   @tailrec
   private def moveChunk(chunk: MemoryChunk, others: List[MemoryChunk], spaces: List[Int], soFar: Long, indexInFile: Int): (Long, List[MemoryChunk], List[Int], Int) =
     if (spaces.sum == 0) {
-      val addition = score((0 until chunk.size).map(offset => (chunk.position, indexInFile + offset)))
-      val newSpaces = spaces
-      val newSoFar = soFar + addition
+      val addition = score(chunk.position, indexInFile, chunk.size)
       val newIndexInFile = indexInFile + chunk.size
-      (newSoFar, others, newSpaces, newIndexInFile)
+      (soFar + addition, others, spaces, newIndexInFile)
     } else if (chunk.size < spaces.head) {
       val newSpaces = (spaces.head - chunk.size) +: spaces.tail
-      val additionToSoFar = score((0 until chunk.size).map(offset => (chunk.position, indexInFile + offset)))
-      val newSoFar = soFar + additionToSoFar
-      val newIndexInFile = indexInFile + chunk.size
+      val (updatedScore, updatedPosition) = updateScoreAndPositionWithChunk(chunk, indexInFile, soFar)
       if (others.size == 1) {
-        moveChunk(others.head, List.empty, newSpaces, newSoFar, newIndexInFile)
+        moveChunk(others.head, List.empty, newSpaces, updatedScore, updatedPosition)
       } else {
-        (newSoFar, others, newSpaces, newIndexInFile)
+        (updatedScore, others, newSpaces, updatedPosition)
       }
     } else if (chunk.size == spaces.head) {
       val newSpaces = spaces.tail
-      val additionToSoFar = score((0 until chunk.size).map(offset => (chunk.position, indexInFile + offset)))
-      val newSoFar = soFar + additionToSoFar
-      val newIndexInFile = indexInFile + chunk.size
-      if (others.size > 0) {
-        val scoreOfFirstChunk = score((0 until others.head.size).map(offset => (others.head.position, newIndexInFile + offset)))
-        val indexInFileAfterCalculatingFirstChunk = newIndexInFile + others.head.size
-        val soFarAfterFirstChunk = newSoFar + scoreOfFirstChunk
-        (soFarAfterFirstChunk, others.tail, newSpaces, indexInFileAfterCalculatingFirstChunk)
+      val (updatedScoreAfterMovingChunk, newIndex) = updateScoreAndPositionWithChunk(chunk, indexInFile, soFar)
+      if (others.nonEmpty) {
+        val (updatedScore, updatedPosition) = updateScoreAndPositionWithChunk(others.head, newIndex, updatedScoreAfterMovingChunk)
+        (updatedScore, others.tail, newSpaces, updatedPosition)
       } else {
-        (newSoFar, others, newSpaces, newIndexInFile)
+        (updatedScoreAfterMovingChunk, others, newSpaces, newIndex)
       }
     } else {
-      val newSpaces = spaces.tail
       val newChunk = chunk.copy(size = chunk.size - spaces.head)
-      val additionToSoFar = score((0 until spaces.head).map(offset => (chunk.position, indexInFile + offset)))
-      val indexInFileAfterMovingFromEnd = indexInFile + spaces.head
-      if (others.size == 0) {
-        (soFar + additionToSoFar, List(newChunk), List.empty, indexInFileAfterMovingFromEnd)
+      val chunkToMove = chunk.copy(size = spaces.head)
+      val (updatedScoreAfterMovingChunk, indexInFileAfterMovingFromEnd) = updateScoreAndPositionWithChunk(chunkToMove, indexInFile, soFar)
+      if (others.isEmpty) {
+        (updatedScoreAfterMovingChunk, List(newChunk), List.empty, indexInFileAfterMovingFromEnd)
       } else {
-        val scoreOfFirstChunk = score((0 until others.head.size).map(offset => (others.head.position, indexInFileAfterMovingFromEnd + offset)))
-        val indexInFileAfterCalculatingFirstChunk = indexInFileAfterMovingFromEnd + others.head.size
-        val newSoFar = soFar + additionToSoFar + scoreOfFirstChunk
-        moveChunk(newChunk, others.tail, newSpaces, newSoFar, indexInFileAfterCalculatingFirstChunk)
+        val (updatedScore, updatedPosition) = updateScoreAndPositionWithChunk(others.head, indexInFileAfterMovingFromEnd, updatedScoreAfterMovingChunk)
+        moveChunk(newChunk, others.tail, spaces.tail, updatedScore, updatedPosition)
       }
     }
+
+  private def updateScoreAndPositionWithChunk(c: MemoryChunk, indexInFile: Int, soFar: Long): (Long, Int) =
+    val scoreOfFirstChunk = score(c.position, indexInFile, c.size)
+    (soFar + scoreOfFirstChunk, indexInFile + c.size)
+
 
   private def parseSpaces(s: String): List[Int] =
     val onlySpaces = s.zipWithIndex.collect { case (ch, i) if i % 2 != 0 => ch }.mkString
@@ -82,7 +75,6 @@ object DayNine extends DayChallenge[Long, Int]{
   private def parseMemoryChunks(s: String): List[MemoryChunk] =
     val onlyMemoryChunks = s.zipWithIndex.collect { case (ch, i) if i % 2 == 0 => ch }.mkString
     onlyMemoryChunks.zipWithIndex.map((char, index) => MemoryChunk(char.toString.toInt, index)).toList
-
 
   override def partTwo(l: List[String]): Int = {
     2
