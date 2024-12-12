@@ -18,10 +18,10 @@ trait GridHelpers {
 
     def printable = "\n" + grid.mkString("\n")
 
-    def allCoords = for {
+    def allCoords = (for {
       x <- grid.head.indices
       y <- grid.indices
-    } yield Coord(x, y)
+    } yield Coord(x, y)).toList
 
     def rotate90 = grid.transpose.map(_.reverse.mkString)
     
@@ -33,6 +33,9 @@ trait GridHelpers {
 
   def getNeighbourCoordNoDiagonals(x: Int, y: Int, l: List[String]): List[(Int, Int)] =
     justAdjacentVectors.map(v => (x + v._1, y + v._2)).filter { case (x, y) => l.isInGrid(x, y) }
+    
+  def getNeighbourCoordNoDiagonals(c: Coord, l: List[String]): List[Coord] =
+    getNeighbourCoordNoDiagonals(c.x, c.y, l).map((x, y) => Coord(x, y))
 
   val justAdjacentVectors = List((-1, 0), (0, -1), (0, 1), (1, 0))
   val diagonalVectors = List((-1, -1), (1, -1), (1, 1), (-1, 1))
