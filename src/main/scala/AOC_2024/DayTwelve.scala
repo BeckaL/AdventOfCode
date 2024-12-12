@@ -29,81 +29,59 @@ object DayTwelve extends DayChallenge[Long, Long] with GridHelpers {
     getNeighbourCoordNoDiagonals(c.x, c.y, l).map { case (x, y) => Coord(x, y) }
 
   private def countSides(r: Set[Coord], l: List[String]) =
-    val topLeft = r.toList.filter(c => c.y == r.map(_.y).min).minBy(_.x)
-    println(s"region is $r")
-    val sides = traverseBoundary(topLeft, 'N', l, List(), r, 1)
-    println(s"\nchar is ${l(topLeft.y)(topLeft.x)}")
-    println(s"sides are $sides\n")
+    val edges = allEdges(r)
+    val first = r.head
+    println(s"char is ${l(first.y)(first.x)}")
+
+//    println(s"got edges $edges")
+    val sides = countContinguousEdges(edges, 0)
+    println(s"got sides $sides")
     sides
 
+  private def allEdges(r: Set[Coord]): List[(Coord, Char)] =
+    val allCellEdges = r.toList.flatMap(c => List('N', 'S', 'E', 'W').map((c, _)))
+    allCellEdges.filter{ case (c, char) =>
+      char match {
+        case 'N' => r.contains(Coord(c.x, c.y - 1))
+        case 'S' => r.contains(Coord(c.x, c.y + 1))
+        case 'E' => r.contains(Coord(c.x + 1, c.y))
+        case _ => r.contains(Coord(c.x - 1, c.y))
+    }}
+
   @tailrec
-  private def traverseBoundary(c: Coord, position: Char, l: List[String], traversedAlready: List[(Coord, Char)], r: Set[Coord], soFar: Int): Int =
-    println(s"\ntraversing boundary from $c with edge $position")
-    val neighbours = outsideCoordsWithNeighbouringSides(c, r, position, l, List(c), List(c))
-    println(s"neighbours are $neighbours")
-    val endCoord = position.match {
-      case 'N' => neighbours.maxBy(_.x)
-      case 'S' => neighbours.minBy(_.x)
-      case 'E' => neighbours.maxBy(_.y)
-      case _ => neighbours.minBy(_.y)
-    }
-    val (nextCoord, nextPosition) = position match {
-      case 'N' =>
-        val nextPosition = List((0, 1), (0, -1)).map{ case (xDiff, yDiif) => Coord(endCoord.x + xDiff, endCoord.y+yDiif)}.find(r.contains) match {
-          case Some(c) => if (c.x < endCoord.x) 'W' else 'E'
-          case None => 'E'
-        }
-        (endCoord, nextPosition)
-      case 'S' =>
-        val nextPosition =
-          List((0, 1), (0, -1)).map{ case (xDiff, yDiif) => Coord(endCoord.x + xDiff, endCoord.y+yDiif)}.find(r.contains) match {
-            case Some(c) => if(c.x < endCoord.y) 'W' else 'E'
-            case None => 'W'
-          }
-        (endCoord, nextPosition)
-      case 'E' =>
-        List((1, 1), (-1, 0)).map{ case (xDiff, yDiif) => Coord(endCoord.x + xDiff, endCoord.y+yDiif)}.find(r.contains) match {
-          case Some(c) =>
-//            println(s"going east next is $c")
-            if (c.y > endCoord.y) (c, 'N') else (endCoord, 'S')
-          case None => (endCoord, 'S')
-        }
-      case _ => List((1, 0), (-1, 0)).map{ case (xDiff, yDiif) => Coord(endCoord.x + xDiff, endCoord.y+yDiif)}.find(r.contains) match {
-        case Some(c) => if (c.y < endCoord.y) (endCoord, 'S') else (endCoord, 'N')
-        case None => (endCoord, 'N')
-      }
-    }
-//    println(nextCoord)
-    if (traversedAlready.contains((nextCoord, nextPosition))) {
+  private def countContinguousEdges(edges: List[(Coord, Char)], soFar: Int): Int =
+    if (edges.isEmpty) {
       soFar
     } else {
-      traverseBoundary(nextCoord, nextPosition, l, (c, position) +: traversedAlready, r, soFar + 1)
+      val nextEdge = edges.head
+      val possibleContiguousEdges = edges.filter(e => e._2 == nextEdge._2)
+      val contiguousCells = nextEdge._2 match {
+        case northOrSouth if Set('N', 'S').contains(northOrSouth) =>
+          val cc = getContiguousCells(nextEdge._1, possibleContiguousEdges.filter(_._1.x == nextEdge._1.x).map(_._1))
+          cc.map(c => (c, northOrSouth))
+        case dir =>
+          val cc = getContiguousCells(nextEdge._1, possibleContiguousEdges.filter(_._1.y == nextEdge._1.y).map(_._1))
+          cc.map(c => (c, dir))
+      }
+//      println(s"got contiguous edges $contiguousCells")
+      val newEdges = edges.filterNot(contiguousCells.contains)
+      countContinguousEdges(edges.filterNot(contiguousCells.contains), soFar + 1)
     }
 
-  @tailrec
-  private def outsideCoordsWithNeighbouringSides(c: Coord, r: Set[Coord], position: Char, l: List[String], found: List[Coord], next: List[Coord]): List[Coord] =
-    val vectors = if (Set('N', 'S').contains(position)) {
-      List((-1, 0), (1, 0))
-    } else {
-      List((0, 1), (0, -1))
-    }
-    val relevantNeighbours = vectors
-      .map{case (xDiff, yDiff) => Coord(c.x + xDiff, c.y + yDiff)}
-      .filter(r.contains).filterNot(found.contains)
-    val newFound = relevantNeighbours.filter(n =>
-      position match {
-        case 'N' => !r.contains(Coord(n.x, n.y - 1))
-        case 'S' => !r.contains(Coord(n.x, n.y +1))
-        case 'E' => !r.contains(Coord(n.x + 1, n.y))
-        case _ => !r.contains(Coord(n.x - 1, n.y))
-      })
-    val newNext = newFound ++ next
-    if (newNext.isEmpty) {
-      found
-    } else {
-      outsideCoordsWithNeighbouringSides(newNext.head, r, position, l, found ++ newFound, newNext.tail)
-    }
-
+  private def getContiguousCells(start: Coord, toCheck: List[Coord]): List[Coord] =
+//    println(s"to check are $toCheck")
+    @tailrec
+    def go(found: List[Coord], toExplore: List[Coord], current: Coord, i: Int): List[Coord] =
+//      println(s"exploring with found $found and toExplore $toExplore and current $current")
+      val additionalFound = current.neighboursWithoutDiagonals.filter(neighbour => toCheck.contains(neighbour) && !found.contains(neighbour))
+//      println(s" additional found are $additionalFound")
+      val newToExplore = toExplore ++ additionalFound
+      if (newToExplore.isEmpty) {
+        found ++ additionalFound
+      } else {
+        go(found ++ additionalFound, newToExplore.tail, newToExplore.head, i + 1)
+      }
+    go(List(start), List(), start, 0)
 
   @tailrec
   private def bucketFill(l: List[String], found: Set[Coord], next: List[Coord], char: Char): Set[Coord] =
@@ -122,7 +100,6 @@ object DayTwelve extends DayChallenge[Long, Long] with GridHelpers {
   override def partTwo(l: List[String]): Long = {
     val regions = getRegions(l.allCoords.toList, List(), l)
     regions.map(r => r.size.toLong * countSides(r, l)).sum
-
   }
 }
 
