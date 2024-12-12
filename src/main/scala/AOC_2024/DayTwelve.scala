@@ -1,6 +1,7 @@
 package AOC_2024
 
 import shared.{Coord, DayChallenge, GridHelpers, TestData}
+import shared.bucketFill
 
 import scala.annotation.tailrec
 
@@ -13,7 +14,7 @@ object DayTwelve extends DayChallenge[Long, Long] with GridHelpers {
     coordsRemaining match
       case Nil => found
       case first :: others =>
-        val foundRegion = bucketFill(l, Set(first), List(first), l(first.y)(first.x))
+        val foundRegion = bucketFill(Set(first), List(first), l, l(first.y)(first.x))
         val newCoordsRemaining = coordsRemaining.filterNot(foundRegion.contains)
         getRegions(newCoordsRemaining, l, foundRegion +: found)
 
@@ -38,26 +39,16 @@ object DayTwelve extends DayChallenge[Long, Long] with GridHelpers {
 
   private def getContiguousCells(start: Coord, toCheck: List[Coord]): List[Coord] =
     @tailrec
-    def go(found: List[Coord], toExplore: List[Coord], current: Coord, i: Int): List[Coord] =
-      val additionalFound = current.neighboursWithoutDiagonals.filter(neighbour =>
-        toCheck.contains(neighbour) && !found.contains(neighbour))
-      val newToExplore = toExplore ++ additionalFound
-      if (newToExplore.isEmpty)
-        found ++ additionalFound
-      else
-        go(found ++ additionalFound, newToExplore.tail, newToExplore.head, i + 1)
+    def go(found: List[Coord], toExplore: List[Coord]): List[Coord] =
+      toExplore match
+        case Nil => found
+        case nextC :: others =>
+          val additionalFound = nextC.neighboursWithoutDiagonals.filter(neighbour =>
+            toCheck.contains(neighbour) && !found.contains(neighbour))
+          val newToExplore = others ++ additionalFound
+          go(found ++ additionalFound, others ++ additionalFound)
 
-    go(List(start), List(), start, 0)
-
-  @tailrec
-  private def bucketFill(l: List[String], found: Set[Coord], next: List[Coord], char: Char): Set[Coord] =
-    next match
-      case Nil => found
-      case nextCoord :: remainingNext =>
-        val additionalNeighbours = getNeighbourCoordNoDiagonals(nextCoord, l)
-          .filter(c => l(c.y)(c.x) == char && !found.contains(c))
-        val newNext = next.tail ++ additionalNeighbours
-        bucketFill(l, found ++ additionalNeighbours.toSet, newNext, char)
+    go(List(start), List(start))
 
   override def partTwo(l: List[String]): Long =
     getRegions(l.allCoords, l)

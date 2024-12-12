@@ -25,14 +25,14 @@ def dijkstra[A](getWeight: (A, Int) => Int, next: (A, Set[A]) => List[A], isTarg
 
 //Introduced for day 18 2023 although not used as refactored
 @tailrec
-private def bucketFill(found: Set[Coord], toExplore: List[Coord], g: List[String]): Set[Coord] =
+def bucketFill(found: Set[Coord], toExplore: List[Coord], g: List[String], char: Char): Set[Coord] =
   toExplore match
     case Nil => found
     case next :: others =>
       val filteredNeighbours = next.neighbours.filter(neighbour => isInGrid(g, neighbour) && !found.contains(neighbour))
-      val unexploredNeighboursInGrid = filteredNeighbours.filter(c => g(c.y)(c.x) == '.').toList
+      val unexploredNeighboursInGrid = filteredNeighbours.filter(c => g(c.y)(c.x) == char).toList
       val newToExplore = others ++ unexploredNeighboursInGrid
-      bucketFill(found ++ unexploredNeighboursInGrid.toSet, newToExplore, g)
+      bucketFill(found ++ unexploredNeighboursInGrid.toSet, newToExplore, g, char)
   
 def isInGrid(grid: List[String], coord: Coord) =
   grid.indices.contains(coord.y) && grid.head.indices.contains(coord.x)
