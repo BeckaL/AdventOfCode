@@ -2,28 +2,31 @@ package AOC_2024
 
 import shared.{DayChallenge, Helpers, TestData}
 
-object DayThirteen extends DayChallenge[Int, Int] with Helpers{
-  override def partOne(l: List[String]): Int =
-    splitIntoGroupsOfList(l).map(parseButtonsAndPrizes).flatMap(optimumPresses).sum
+object DayThirteen extends DayChallenge[Long, Long] with Helpers{
+  override def partOne(l: List[String]): Long =
+    splitIntoGroupsOfList(l).map(parseButtonsAndPrizes(_)).map(solveLinearEquations).sum
 
-  private def optimumPresses(a: (Int, Int), b: (Int, Int), target: (Int, Int)): Option[Int] =
-    val possibleTokensSpent = (1 to 100).flatMap(aPresses =>
-      (0 to 100).find(bPresses =>
-        (a._1 * aPresses) + (b._1 * bPresses) == target._1 &&
-          (a._2 * aPresses) + (b._2 * bPresses) == target._2
-      ).map(bPresses => aPresses * 3 + bPresses).toList
-    )
-    possibleTokensSpent.find(i => i == possibleTokensSpent.min)
+  private def solveLinearEquations(a: (Int, Int), b: (Int, Int), target: (Long, Long)) =
+    val aAnswer = BigDecimal(target._1 * b._2 - target._2 * b._1) / BigDecimal(a._1 * b._2 - a._2 * b._1)
+    val bAnswer = BigDecimal(a._1 * target._2 - a._2 * target._1) / BigDecimal(a._1 * b._2 - a._2 * b._1)
+    if (isWholeNumber(aAnswer) && isWholeNumber(bAnswer))
+      (aAnswer * 3 + bAnswer).toLong
+    else
+      0
 
-  private def parseButtonsAndPrizes(s: List[String]): ((Int, Int), (Int, Int), (Int, Int)) =
+  private def isWholeNumber(n: BigDecimal) =
+    n.remainder(BigDecimal(1)).compareTo(BigDecimal(0)) == 0
+
+  private def parseButtonsAndPrizes(s: List[String], targetAddition: Long = 0): ((Int, Int), (Int, Int), (Long, Long)) =
     val is = extractInts(s.mkString("\n"))
-    ((is.head, is(1)), (is(2), is(3)), (is(4), is(5)))
+    ((is.head, is(1)), (is(2), is(3)), (is(4) + targetAddition, is(5) + targetAddition))
 
-  override def partTwo(l: List[String]): Int =
-    2
+  override def partTwo(l: List[String]): Long =
+    splitIntoGroupsOfList(l).map(parseButtonsAndPrizes(_, 10000000000000L))
+      .map(solveLinearEquations).sum
 }
 
-object DayThirteenData extends TestData[Int, Int] {
+object DayThirteenData extends TestData[Long, Long] {
   override val testData: List[String] = List(
     "Button A: X+94, Y+34",
     "Button B: X+22, Y+67",
@@ -41,6 +44,6 @@ object DayThirteenData extends TestData[Int, Int] {
     "Button B: X+27, Y+71",
     "Prize: X=18641, Y=10279"
   )
-  override val expectedPartOne: Option[Int] = Some(480)
-  override val expectedPartTwo: Option[Int] = Some(0)
+  override val expectedPartOne: Option[Long] = Some(480L)
+  override val expectedPartTwo: Option[Long] = Some(875318608908L)
 }
