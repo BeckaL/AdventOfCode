@@ -29,7 +29,7 @@ object DaySixteen extends DayChallenge[Int, Int] with GridHelpers{
   private val forwardSlashTranslations = Map('E' -> 'N', 'N' -> 'E', 'W' -> 'S', 'S' -> 'W')
   private val backSlashTranslations = Map('E' -> 'S', 'S' -> 'E', 'W' -> 'N', 'N' -> 'W')
   private def move(beam: Beam, g: List[String]): Set[Beam] =
-    val newCoord = beam.position.moveYIsReversed(beam.direction, 1)
+    val newCoord = beam.position.move(beam.direction, 1)
     if (g.isInGrid(newCoord)) {
       val next = g(newCoord.y)(newCoord.x)
       val newBeam = beam.copy(position = newCoord)

@@ -28,7 +28,7 @@ object DaySeventeen extends DayChallenge[Int, Int] with GridHelpers {
       case ('S', _) => List('E', 'S', 'W')
       case ('N', _) => List('E', 'N', 'W')
     possibleDirections
-      .map(d => d -> node.coord.moveYIsReversed(d, 1))
+      .map(d => d -> node.coord.move(d, 1))
       .map { case (newDirection, coord) =>
         Node(coord, newDirection, if (newDirection == node.direction) node.steps + 1 else 0)
       }.filter(node => grid.isInGrid(node.coord) && node.steps < max && !visited.contains(node))

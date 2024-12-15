@@ -32,7 +32,7 @@ object DayTwentyTwo extends DayChallenge[Int, Int] with GridHelpers with Helpers
         case 'W' => d
         case 'F' => Direction.reverse(d)
       }
-      val (updatedCoord, newGridAfterNewCoord) = getNewGridAndUpdatedCoord(c.move(newDirection, 1), gridWithNewInfection)
+      val (updatedCoord, newGridAfterNewCoord) = getNewGridAndUpdatedCoord(c.moveYStartsFromOrigin(newDirection, 1), gridWithNewInfection)
       (newGridAfterNewCoord, updatedCoord, newDirection, newInfections)
     }
 

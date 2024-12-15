@@ -11,7 +11,7 @@ object DaySix extends DayChallenge[Int, Int] with GridHelpers {
 
   @tailrec
   private def numberOfUniqueSteps(c: Coord, direction: Char, l: List[String], soFar: Set[(Coord, Char)]): Option[Int] =
-    val newCoord = c.moveYIsReversed(direction, 1)
+    val newCoord = c.move(direction, 1)
     if (!l.isInGrid(newCoord))
       Some(soFar.map(_._1).size)
     else if (soFar.contains((newCoord, direction)))

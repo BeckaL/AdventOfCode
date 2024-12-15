@@ -19,7 +19,7 @@ object DayTen extends DayChallenge[Int, Int] with GridHelpers {
     ).head
 
   private def findLoop(loopSoFar: Map[Coord, Char], currentDirection: Char, currentCoordinate: Coord, targetCoordinate: Coord, g: List[String]): Option[(Map[Coord, Char], Char)] =
-    val newCoord = currentCoordinate.moveYIsReversed(currentDirection, 1)
+    val newCoord = currentCoordinate.move(currentDirection, 1)
     if (newCoord == targetCoordinate && loopSoFar.nonEmpty)
       Some(loopSoFar, currentDirection)
     else if (!g.isInGrid(newCoord))

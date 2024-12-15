@@ -20,7 +20,7 @@ object DayFifteen extends DayChallenge[Int, Int] with Helpers with GridHelpers {
   private def getEndBoxes(l: List[String], boxesFinder: BoxesFinder, gridTransformer: GridTransformer = identity) =
     val (bs, r, walls, instructions) = parse(l, boxesFinder, gridTransformer)
     instructions.foldLeft((bs, r)) { case ((boxes, robot), dir) =>
-      val robotIfMoved = robot.moveYIsReversed(dir, 1)
+      val robotIfMoved = robot.move(dir, 1)
       if (walls.contains(robotIfMoved))
         (boxes, robot)
       else
@@ -35,7 +35,7 @@ object DayFifteen extends DayChallenge[Int, Int] with Helpers with GridHelpers {
       next match
         case Nil => soFar
         case first :: others =>
-          val coordsIfMoved = first.map(_.moveYIsReversed(dir, 1))
+          val coordsIfMoved = first.map(_.move(dir, 1))
           if (walls.exists(coordsIfMoved.contains))
             List.empty
           else
@@ -50,8 +50,8 @@ object DayFifteen extends DayChallenge[Int, Int] with Helpers with GridHelpers {
     if (totalBoxesToMove.isEmpty)
       (boxes, robot)
     else
-      val movedBoxes = boxes.map(b => if (totalBoxesToMove.contains(b)) b.map(_.moveYIsReversed(dir, 1)) else b)
-      (movedBoxes, robot.moveYIsReversed(dir, 1))
+      val movedBoxes = boxes.map(b => if (totalBoxesToMove.contains(b)) b.map(_.move(dir, 1)) else b)
+      (movedBoxes, robot.move(dir, 1))
 
   private type GridTransformer = List[String] => List[String]
   private type Box = List[Coord]

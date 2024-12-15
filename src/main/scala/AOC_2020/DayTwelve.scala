@@ -16,16 +16,16 @@ object DayTwelve extends DayChallenge[Int, Int] with GridHelpers {
   private def getNewStateWithDirection(instruction: String, state: State): State =
     instruction.splitAt(1) match {
       case (instruction, n) if clockWiseDirections.contains(instruction.head) =>
-        state.copy(state.position.move(instruction.head, n.toInt))
+        state.copy(state.position.moveYStartsFromOrigin(instruction.head, n.toInt))
       case (instruction, n) if List("L", "R").contains(instruction) =>
         state.copy(currentDirection = getNewDirection(instruction, n.toInt, state.currentDirection))
-      case ("F", n) => state.copy(state.position.move(state.currentDirection, n.toInt))
+      case ("F", n) => state.copy(state.position.moveYStartsFromOrigin(state.currentDirection, n.toInt))
     }
 
   private def getNewStateWithWayPoint(instruction: String, state: State): State = {
     instruction.splitAt(1) match {
       case (instruction, n) if clockWiseDirections.contains(instruction.head) =>
-        state.copy(waypoint = state.waypoint.move(instruction.head, n.toInt))
+        state.copy(waypoint = state.waypoint.moveYStartsFromOrigin(instruction.head, n.toInt))
       case (instruction, n) if List("L", "R").contains(instruction) =>
         state.copy(waypoint = rotateWayPoint(n.toInt, instruction, state.waypoint))
       case ("F", n) => state.copy(position = moveToWayPoint(state.waypoint, n.toInt, state.position))

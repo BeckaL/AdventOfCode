@@ -20,7 +20,7 @@ object DayTwelve extends DayChallenge[Long, Long] with GridHelpers {
 
   private def allEdges(r: Set[Coord]): List[(Coord, Char)] =
     r.toList.flatMap(c => List('N', 'S', 'E', 'W').map((c, _)))
-      .filterNot{ case (c, char) => r.contains(c.moveYIsReversed(char, 1))}
+      .filterNot{ case (c, char) => r.contains(c.move(char, 1))}
 
   private def countContinguousEdges(edges: List[(Coord, Char)]) =
     val nsFilter = (c1: Coord, c2: Coord) => c1.y == c2.y

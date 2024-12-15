@@ -22,7 +22,7 @@ object DayEighteen extends DayChallenge[Int, Long] with GridHelpers {
   private def getCornerPoints(instructions: List[(Char, Int)]) =
     instructions.foldLeft(List(Coord(0, 0))) { case (coordsSoFar, (direction, steps)) =>
       val compassDirection = Map('U' -> 'N', 'D' -> 'S', 'R' -> 'E', 'L' -> 'W')(direction)
-      coordsSoFar.head.move(compassDirection, steps) +: coordsSoFar
+      coordsSoFar.head.moveYStartsFromOrigin(compassDirection, steps) +: coordsSoFar
     }
 
   private def picksArea(instructions: List[(Char, Int)]) =

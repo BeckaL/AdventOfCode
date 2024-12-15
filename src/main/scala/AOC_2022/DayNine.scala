@@ -41,7 +41,7 @@ object DayNine extends DayChallenge[Int, Int] with Helpers {
 
   private def moveNTimes(head: Coord, tails: List[Coord], n: Int, dir: String): (Coord, List[Coord], Set[Coord]) =
     (0 until n).foldLeft((head, tails, Set[Coord]())) { case ((h, t, knot9visits), _) =>
-      val newH = h.move(dirsToCompassDirs(dir), 1)
+      val newH = h.moveYStartsFromOrigin(dirsToCompassDirs(dir), 1)
       val newTails = moveAllKnotsTowardsHead(newH, t)
       (newH, newTails, knot9visits + newTails.last)
     }

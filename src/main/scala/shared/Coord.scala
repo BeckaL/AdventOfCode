@@ -9,20 +9,20 @@ case class Coord(x: Int, y: Int) {
       case 'N' => this
     }
 
-  def move(direction: Char, n: Int): Coord =
+  def moveYStartsFromOrigin(direction: Char, n: Int): Coord =
     direction match {
       case 'N' => Coord(x, y + n)
       case 'E' => Coord(x + n, y)
-      case 'W' => Coord(x - n.toInt, y)
-      case 'S' => Coord(x, y - n.toInt)
+      case 'W' => Coord(x - n, y)
+      case 'S' => Coord(x, y - n)
     }
 
-  def moveYIsReversed(direction: Char, n: Int): Coord =
+  def move(direction: Char, n: Int): Coord =
     direction match {
       case 'N' => Coord(x, y - n)
       case 'E' => Coord(x + n, y)
-      case 'W' => Coord(x - n.toInt, y)
-      case 'S' => Coord(x, y + n.toInt)
+      case 'W' => Coord(x - n, y)
+      case 'S' => Coord(x, y + n)
     }
 
   def move(xAndYDeltas: (Int, Int)): Coord = this.copy(x + xAndYDeltas._1, y + xAndYDeltas._2)
