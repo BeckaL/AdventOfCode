@@ -9,4 +9,12 @@ object Direction extends Helpers {
   def reverse(direction: Char): Char = cycle(directions, direction, 2)
 
   def rotateAntiClockwise(direction: Char): Char = cycle(directions, direction, 3)
+
+  def directionFromPictoral(i: Char) =
+    i match 
+      case '^' => 'N'
+      case 'v' => 'S'
+      case '>' => 'E'
+      case '<' => 'W'
+      case char => throw new RuntimeException(s"didn't understand char $char needed to be one of < > ^ v")
 }

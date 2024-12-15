@@ -11,6 +11,8 @@ trait GridHelpers {
 
     def cellAt(coord: Coord): Char =
       grid(grid.size - 1 - coord.y)(coord.x)
+      
+    def get(c: Coord) = grid(c.y)(c.x)
 
     def height: Int = grid.size
 
@@ -22,6 +24,8 @@ trait GridHelpers {
       x <- grid.head.indices
       y <- grid.indices
     } yield Coord(x, y)).toList
+    
+    def coordsWhereCharIs(pred: Char => Boolean) = allCoords.filter(c => pred(grid.get(c)))
 
     def rotate90 = grid.transpose.map(_.reverse.mkString)
     
